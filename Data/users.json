@@ -1,0 +1,16 @@
+[
+    {
+        "fullName": "Boo",
+        "email": "boo@mail.com",
+        "password": "test123",
+        "phone": "08812345678",
+        "role": "admin"
+    },
+    {
+        "fullName": "Tsuyu",
+        "email": "tsuyu@mail.com",
+        "password": "test123",
+        "phone": "088123456789",
+        "role": "Staff"
+    }
+]
