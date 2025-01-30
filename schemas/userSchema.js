@@ -15,8 +15,14 @@ const userTypeDefs = `#graphql
         password: String!
     }
 
+    type AuthPayload {
+        token: String!
+        id: ID!
+    }
+
     type Mutation {
         register(input: RegisterInput): String
+        googleLogin(token: String!): AuthPayload
     }
 
     type Query {
@@ -45,6 +51,17 @@ const userResolvers = {
         return message;
       } catch (error) {
         console.log("🚀 ~ register: ~ error:", error);
+        return error;
+      }
+    },
+
+    googleLogin: async (_, args) => {
+      try {
+        const { token } = args;
+        const result = await User.googleLogin(token);
+        return result;
+      } catch (error) {
+        console.log("🚀 ~ googleLogin: ~ error:", error);
         return error;
       }
     },
