@@ -1,10 +1,11 @@
 import "dotenv/config";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { userResolvers, userTypeDefs } from "./schemas/userSchema";
 
 const server = new ApolloServer({
-  typeDefs: [],
-  resolvers: [],
+  typeDefs: [userTypeDefs],
+  resolvers: [userResolvers],
   introspection: true,
 });
 
