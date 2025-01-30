@@ -18,6 +18,8 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "graphql": "^16.10.0"
+    "email-validator": "^2.0.4",
+    "graphql": "^16.10.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }
