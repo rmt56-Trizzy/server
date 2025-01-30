@@ -8,11 +8,6 @@ const userTypeDefs = `#graphql
         email: String!
         password : String!
     }
-    
-    type Login {
-        accessToken: String!
-        userId: ID!
-    }
 
     input RegisterInput {
         email: String!
@@ -21,20 +16,19 @@ const userTypeDefs = `#graphql
     }
 
     type AuthPayload {
-        token: String!
-        id: ID!
+        access_token: String!
+        userId: ID!
     }
     
     input LoginInput {
-    email: String
-    password: String
-
+      email: String!
+      password: String!
     }
 
     type Mutation {
         register(input: RegisterInput): String
         googleLogin(token: String!): AuthPayload
-        login(login: LoginInput): Login
+        login(login: LoginInput): AuthPayload
     }
 
     type Query {
@@ -70,6 +64,7 @@ const userResolvers = {
     googleLogin: async (_, args) => {
       try {
         const { token } = args;
+
         const result = await User.googleLogin(token);
         return result;
       } catch (error) {
@@ -77,8 +72,8 @@ const userResolvers = {
         return error;
       }
     },
-      
-    login: async (_,args) => {
+
+    login: async (_, args) => {
       try {
         const { login } = args;
 
@@ -88,8 +83,8 @@ const userResolvers = {
         console.log("🚀 ~ login: ~ error:", error);
         return error;
       }
-    }
-  }
+    },
+  },
 };
 
 export { userTypeDefs, userResolvers };
