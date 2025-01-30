@@ -19,14 +19,14 @@ const { url } = await startStandaloneServer(server, {
       }
       const [type, token] = getToken.split(" ");
 
-      const isValidToken = verifyToken(token);
+      //   const isValidToken = verifyToken(token);
 
-      if (!isValidToken) {
-        throw new Error("Unauthorized");
-      }
-      // const user = await User.findById(isValidToken.id);
+      //   if (!isValidToken) {
+      //     throw new Error("Unauthorized");
+      //   }
+      //   const user = await User.findById(isValidToken.id);
 
-      // return user;
+      //   return user;
     };
 
     return {
