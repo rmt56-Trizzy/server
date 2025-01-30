@@ -8,6 +8,11 @@ const userTypeDefs = `#graphql
         email: String!
         password : String!
     }
+    
+    type Login {
+        accessToken: String!
+        userId: ID!
+    }
 
     input RegisterInput {
         email: String!
@@ -15,8 +20,14 @@ const userTypeDefs = `#graphql
         password: String!
     }
 
+    input LoginInput {
+    email: String
+    password: String
+    }
+
     type Mutation {
         register(input: RegisterInput): String
+        login(login: LoginInput): Login
     }
 
     type Query {
@@ -45,6 +56,17 @@ const userResolvers = {
         return message;
       } catch (error) {
         console.log("🚀 ~ register: ~ error:", error);
+        return error;
+      }
+    },
+    login: async (_,args) => {
+      try {
+        const { login } = args;
+
+        const message = await User.login(login);
+        return message;
+      } catch (error) {
+        console.log("🚀 ~ login: ~ error:", error);
         return error;
       }
     },
