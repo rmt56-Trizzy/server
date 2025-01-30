@@ -1,4 +1,4 @@
-import { getDB } from "../config/mongodb";
+import { getDB } from "../config/mongodb.js";
 import EmailValidator from "email-validator";
 import { comparePasssword, hashPassword } from "../helpers/bcryptjs.js";
 import { signToken } from "../helpers/jwt.js";

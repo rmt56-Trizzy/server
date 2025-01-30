@@ -19,9 +19,23 @@ const userTypeDefs = `#graphql
         register(input: RegisterInput): String
     }
 
+    type Query {
+        hello: String
+    }
+
 `;
 
 const userResolvers = {
+  Query: {
+    hello: async () => {
+      try {
+        return "Hello World";
+      } catch (error) {
+        console.log("🚀 ~ getUser: ~ error:", error);
+        return error;
+      }
+    },
+  },
   Mutation: {
     register: async (_, args) => {
       try {
