@@ -93,4 +93,35 @@ export class User {
 
     return { access_token, id: user._id };
   }
+  
+  static async login(payload) {
+    const { email, password } = payload;
+
+    const collection = this.getCollection();
+
+    if (!email || email.trim() === "") {
+      throw new Error("Email is required");
+    }
+
+    if (!password || password.trim() === "") {
+      throw new Error("Password is required");
+    }
+
+    const existingUser = await collection.findOne({ email });
+    if (!existingUser) {
+      throw new Error("User not found");
+    }
+
+    const isPasswordValid = comparePasssword(password, existingUser.password);
+    if (!isPasswordValid) {
+      throw new Error("Password is incorrect");
+    }
+
+    const accessToken = signToken({ userId: existingUser._id });
+    const token = {
+      accessToken,
+      userId: existingUser._id,
+    };
+    return token;
+  }
 }
