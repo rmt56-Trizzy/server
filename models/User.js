@@ -2,6 +2,7 @@ import { getDB } from "../config/mongodb.js";
 import EmailValidator from "email-validator";
 import { comparePasssword, hashPassword } from "../helpers/bcryptjs.js";
 import { signToken } from "../helpers/jwt.js";
+import { OAuth2Client } from "google-auth-library";
 
 export class User {
   static getCollection() {
@@ -49,12 +50,50 @@ export class User {
       fullName,
       email,
       password: hashPw,
+      chatAllowens: 3,
     };
 
     await collection.insertOne(newUser);
     return "Register is success";
   }
 
+  static async googleLogin(token) {
+    const { clientToken } = token;
+
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+      idToken: clientToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    if (!ticket) {
+      throw { name: "BadRequest", message: "Invalid Google token" };
+    }
+
+    const payload = ticket.getPayload();
+
+    let user = await User.findOne({
+      where: {
+        googleAuth: payload.sub,
+      },
+    });
+
+    if (!user) {
+      user = await User.create({
+        googleAuth: payload.sub,
+        fullName: payload.name,
+        email: payload.email,
+        password: hashPassword(Math.random().toString(36).slice(-8)),
+      });
+    }
+
+    const access_token = signToken({
+      id: user._id,
+    });
+
+    return { access_token, id: user._id };
+  }
+  
   static async login(payload) {
     const { email, password } = payload;
 
