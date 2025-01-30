@@ -77,17 +77,24 @@ export class User {
     });
 
     if (!user) {
-      user = await collection.insertOne({
+      const newUser = {
         googleAuth: payload.sub,
         fullName: payload.name,
         email: payload.email,
         password: hashPassword(Math.random().toString(36).slice(-8)),
-      });
+      };
+
+      const result = await collection.insertOne(newUser);
+      user = {
+        _id: result.insertedId,
+        ...newUser,
+      };
     }
 
     const access_token = signToken({
       id: user._id,
     });
+
     const result = {
       access_token,
       userId: user._id,
