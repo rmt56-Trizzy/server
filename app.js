@@ -2,10 +2,16 @@ import "dotenv/config";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { userResolvers, userTypeDefs } from "./schemas/userSchema.js";
+import {
+  subscriptionTypeDefs,
+  subscriptionResolvers,
+} from "./schemas/subscriptionSchema.js";
+import { verifyToken } from "./helpers/jwt.js";
+import { User } from "./models/User.js";
 
 const server = new ApolloServer({
-  typeDefs: [userTypeDefs],
-  resolvers: [userResolvers],
+  typeDefs: [userTypeDefs, subscriptionTypeDefs],
+  resolvers: [userResolvers, subscriptionResolvers],
   introspection: true,
 });
 
@@ -13,21 +19,31 @@ const { url } = await startStandaloneServer(server, {
   listen: { port: process.env.PORT || 3005 },
   context: async ({ req, res }) => {
     const authN = async () => {
-      const getToken = req.headers.authorization;
-
-      if (!getToken) {
-        throw new Error("Unauthorized");
+      const bearerToken = req.headers.authorization;
+      if (!bearerToken) {
+        throw new Error(
+          JSON.stringify({
+            message: "You must be logged in",
+            code: "UNAUTHORIZED",
+          })
+        );
       }
-      const [type, token] = getToken.split(" ");
+      const [type, token] = bearerToken.split(" ");
 
-      //   const isValidToken = verifyToken(token);
-
-      //   if (!isValidToken) {
-      //     throw new Error("Unauthorized");
-      //   }
-      //   const user = await User.findById(isValidToken.id);
-
-      //   return user;
+      const { userId } = verifyToken(token);
+      if (!userId) {
+        throw new Error(
+          JSON.stringify({ message: "Invalid token", code: "UNAUTHORIZED" })
+        );
+      }
+      const user = await User.getUserById(userId);
+      if (!user) {
+        throw new Error(
+          JSON.stringify({ message: "Invalid token", code: "UNAUTHORIZED" })
+        );
+      }
+      const { password, ...rest } = user;
+      return rest;
     };
 
     return {

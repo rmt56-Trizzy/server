@@ -3,6 +3,8 @@ import EmailValidator from "email-validator";
 import { comparePasssword, hashPassword } from "../helpers/bcryptjs.js";
 import { signToken } from "../helpers/jwt.js";
 import { OAuth2Client } from "google-auth-library";
+import { ObjectId } from "mongodb";
+import { GraphQLError } from "graphql";
 
 export class User {
   static getCollection() {
@@ -17,32 +19,46 @@ export class User {
     const collection = this.getCollection();
 
     if (!fullName || fullName.trim() === "") {
-      throw new Error("Full name is required");
+      throw {
+        message: "Full name is required",
+        code: "BAD_REQUEST",
+      };
     }
 
     if (!email || email.trim() === "") {
-      throw new Error("Email is required");
+      throw {
+        message: "Email is required",
+        code: "BAD_REQUEST",
+      };
     }
 
     if (!EmailValidator.validate(email)) {
-      throw new GraphQLError("Invalid email format");
+      throw {
+        message: "Invalid email format",
+        code: "BAD_REQUEST",
+      };
     }
 
     const isExistingUserByEmail = await collection.findOne({ email });
     if (isExistingUserByEmail) {
-      throw new GraphQLError("Email already used");
+      throw {
+        message: "Email already registered",
+        code: "BAD_REQUEST",
+      };
     }
 
     if (!password || password.trim() === "") {
-      throw new GraphQLError("Password is required", {
-        extensions: {
-          code: "BAD REQUEST",
-        },
-      });
+      throw {
+        message: "Password is required",
+        code: "BAD_REQUEST",
+      };
     }
 
     if (password.trim().length < 5) {
-      throw new GraphQLError("Password at least 5 characters long");
+      throw {
+        message: "Password is not strong enough",
+        code: "BAD_REQUEST",
+      };
     }
 
     const hashPw = hashPassword(password);
@@ -50,11 +66,11 @@ export class User {
       fullName,
       email,
       password: hashPw,
-      chatAllowens: 3,
+      freeTrial: 3,
     };
 
     await collection.insertOne(newUser);
-    return "Register is success";
+    return "Register successful";
   }
 
   static async googleLogin(token) {
@@ -67,7 +83,10 @@ export class User {
     });
 
     if (!ticket) {
-      throw { name: "BadRequest", message: "Invalid Google token" };
+      throw {
+        message: "Invalid token",
+        code: "UNAUTHORIZED",
+      };
     }
 
     const payload = ticket.getPayload();
@@ -82,6 +101,7 @@ export class User {
         fullName: payload.name,
         email: payload.email,
         password: hashPassword(Math.random().toString(36).slice(-8)),
+        freeTrial: 3,
       };
 
       const result = await collection.insertOne(newUser);
@@ -109,21 +129,33 @@ export class User {
     const collection = this.getCollection();
 
     if (!email || email.trim() === "") {
-      throw new Error("Email is required");
+      throw {
+        message: "Email is required",
+        code: "BAD_REQUEST",
+      };
     }
 
     if (!password || password.trim() === "") {
-      throw new Error("Password is required");
+      throw {
+        message: "Password is required",
+        code: "BAD_REQUEST",
+      };
     }
 
     const existingUser = await collection.findOne({ email });
     if (!existingUser) {
-      throw new Error("User not found");
+      throw {
+        message: "Invalid email or password",
+        code: "UNAUTHORIZED",
+      };
     }
 
     const isPasswordValid = comparePasssword(password, existingUser.password);
     if (!isPasswordValid) {
-      throw new Error("Password is incorrect");
+      throw {
+        message: "Invalid email or password",
+        code: "UNAUTHORIZED",
+      };
     }
 
     const access_token = signToken({ userId: existingUser._id });
@@ -132,5 +164,17 @@ export class User {
       userId: existingUser._id,
     };
     return token;
+  }
+
+  static async getUserById(userId) {
+    const collection = this.getCollection();
+    const user = await collection.findOne({ _id: new ObjectId(userId) });
+    if (!user) {
+      // throw new Error(
+      //   JSON.stringify({ message: "User not found", code: "NOT_FOUND" })
+      // );
+      throw { message: "User not found", code: "NOT_FOUND" };
+    }
+    return user;
   }
 }
