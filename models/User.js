@@ -58,11 +58,11 @@ export class User {
   }
 
   static async googleLogin(token) {
-    const { clientToken } = token;
+    const collection = this.getCollection();
 
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
     const ticket = await client.verifyIdToken({
-      idToken: clientToken,
+      idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
@@ -72,28 +72,37 @@ export class User {
 
     const payload = ticket.getPayload();
 
-    let user = await User.findOne({
-      where: {
-        googleAuth: payload.sub,
-      },
+    let user = await collection.findOne({
+      googleAuth: payload.sub,
     });
 
     if (!user) {
-      user = await User.create({
+      const newUser = {
         googleAuth: payload.sub,
         fullName: payload.name,
         email: payload.email,
         password: hashPassword(Math.random().toString(36).slice(-8)),
-      });
+      };
+
+      const result = await collection.insertOne(newUser);
+      user = {
+        _id: result.insertedId,
+        ...newUser,
+      };
     }
 
     const access_token = signToken({
       id: user._id,
     });
 
-    return { access_token, id: user._id };
+    const result = {
+      access_token,
+      userId: user._id,
+    };
+
+    return result;
   }
-  
+
   static async login(payload) {
     const { email, password } = payload;
 
@@ -117,9 +126,9 @@ export class User {
       throw new Error("Password is incorrect");
     }
 
-    const accessToken = signToken({ userId: existingUser._id });
+    const access_token = signToken({ userId: existingUser._id });
     const token = {
-      accessToken,
+      access_token,
       userId: existingUser._id,
     };
     return token;
