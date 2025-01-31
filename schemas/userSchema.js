@@ -1,4 +1,6 @@
+import { GraphQLError } from "graphql";
 import { User } from "../models/User.js";
+import { errorHandler } from "../helpers/errorHandler.js";
 
 const userTypeDefs = `#graphql
 
@@ -33,6 +35,7 @@ const userTypeDefs = `#graphql
 
     type Query {
         hello: String
+        getUserById(_id: ID!): User
     }
 
 `;
@@ -44,7 +47,17 @@ const userResolvers = {
         return "Hello World";
       } catch (error) {
         console.log("🚀 ~ getUser: ~ error:", error);
-        return error;
+        errorHandler(error);
+      }
+    },
+    getUserById: async function (_, args) {
+      try {
+        const { _id } = args;
+        const user = await User.getUserById(_id);
+        return user;
+      } catch (error) {
+        console.log("🚀 ~ getUserById: ~ error:", error);
+        errorHandler(error);
       }
     },
   },
@@ -57,7 +70,7 @@ const userResolvers = {
         return message;
       } catch (error) {
         console.log("🚀 ~ register: ~ error:", error);
-        return error;
+        errorHandler(error);
       }
     },
 
@@ -69,7 +82,7 @@ const userResolvers = {
         return result;
       } catch (error) {
         console.log("🚀 ~ googleLogin: ~ error:", error);
-        return error;
+        errorHandler(error);
       }
     },
 
@@ -81,7 +94,7 @@ const userResolvers = {
         return message;
       } catch (error) {
         console.log("🚀 ~ login: ~ error:", error);
-        return error;
+        errorHandler(error);
       }
     },
   },
