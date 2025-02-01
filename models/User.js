@@ -4,7 +4,6 @@ import { comparePasssword, hashPassword } from "../helpers/bcryptjs.js";
 import { signToken } from "../helpers/jwt.js";
 import { OAuth2Client } from "google-auth-library";
 import { ObjectId } from "mongodb";
-import { GraphQLError } from "graphql";
 
 export class User {
   static getCollection() {
@@ -170,11 +169,29 @@ export class User {
     const collection = this.getCollection();
     const user = await collection.findOne({ _id: new ObjectId(userId) });
     if (!user) {
-      // throw new Error(
-      //   JSON.stringify({ message: "User not found", code: "NOT_FOUND" })
-      // );
       throw { message: "User not found", code: "NOT_FOUND" };
     }
     return user;
+  }
+
+  static async deductFreeTrial(userId) {
+    const collection = this.getCollection();
+    const user = await collection.findOne({ _id: new ObjectId(userId) });
+    if (!user) {
+      throw { message: "User not found", code: "NOT_FOUND" };
+    }
+    if (user.freeTrial <= 0) {
+      throw {
+        message:
+          "Your free trial is over. Please subscribe to start a new chat.",
+        code: "BAD_REQUEST",
+      };
+    }
+    const newFreeTrial = user.freeTrial - 1;
+    await collection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { freeTrial: newFreeTrial } }
+    );
+    return newFreeTrial;
   }
 }

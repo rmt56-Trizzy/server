@@ -6,12 +6,13 @@ import {
   subscriptionTypeDefs,
   subscriptionResolvers,
 } from "./schemas/subscriptionSchema.js";
+import { chatTypeDefs, chatResolvers } from "./schemas/chatSchema.js";
 import { verifyToken } from "./helpers/jwt.js";
 import { User } from "./models/User.js";
 
 const server = new ApolloServer({
-  typeDefs: [userTypeDefs, subscriptionTypeDefs],
-  resolvers: [userResolvers, subscriptionResolvers],
+  typeDefs: [userTypeDefs, subscriptionTypeDefs, chatTypeDefs],
+  resolvers: [userResolvers, subscriptionResolvers, chatResolvers],
   introspection: true,
 });
 

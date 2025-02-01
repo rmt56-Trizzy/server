@@ -51,7 +51,6 @@ const subscriptionResolvers = {
     addSubscription: async (_, args, context) => {
       try {
         const { _id: userId } = await context.authentication();
-        console.log(args);
         const { payload } = args;
         payload.userId = userId;
         const response = await Subscription.addSubscription(payload);
