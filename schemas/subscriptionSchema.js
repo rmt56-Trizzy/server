@@ -85,7 +85,7 @@ const subscriptionResolvers = {
     },
   },
   Mutation: {
-    addSubscription: async (_, args, context) => {
+    addSubscription: async (_, { payload }, context) => {
       try {
         const { _id: userId } = await context.authentication();
 
@@ -123,7 +123,8 @@ const subscriptionResolvers = {
 
         console.log(`✅ Subscription initiated: Order ID ${orderId}`);
 
-        return transaction.redirect_url; // Return payment URL for client to complete payment
+        // return transaction.redirect_url; // Return payment URL for testing using Postman
+        return transaction.token; // Return token for client to complete payment
       } catch (error) {
         console.log("🚀 ~ addSubscription: ~ error:", error);
         errorHandler(error);

@@ -32,12 +32,18 @@ app.post("/midtrans-webhook", async (req, res) => {
     // Verify transaction status with Midtrans API
     const statusResponse = await getTransactionStatus(order_id);
 
-    if (transaction_status === "settlement") {
+    // https://docs.midtrans.com/docs/https-notification-webhooks#b-status-definition-b
+    if (
+      transaction_status === "settlement" ||
+      transaction_status === "capture"
+    ) {
       await Subscription.updateSubscriptionStatus(order_id, "active");
       console.log(`✅ Payment successful: Order ID ${order_id}`);
     } else if (
       transaction_status === "expire" ||
-      transaction_status === "cancel"
+      transaction_status === "cancel" ||
+      transaction_status === "deny" ||
+      transaction_status === "failure"
     ) {
       await Subscription.updateSubscriptionStatus(order_id, "paymentFailed");
       console.log(`❌ Payment failed: Order ID ${order_id}`);
