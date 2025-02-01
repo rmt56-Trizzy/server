@@ -10,6 +10,14 @@ Description:
 
 Request
 
+- operation:
+
+```gql
+mutation Mutation($input: RegisterInput) {
+  register(input: $input)
+}
+```
+
 - input:
 
 ```json
@@ -39,6 +47,17 @@ Description:
 - Login existing user
 
 Request
+
+- operation:
+
+```gql
+mutation Login($login: LoginInput) {
+  login(login: $login) {
+    access_token
+    userId
+  }
+}
+```
 
 - input:
 
@@ -84,6 +103,19 @@ Description:
 
 Request
 
+- operation:
+
+```gql
+query GetUserById($id: ID!) {
+  getUserById(_id: $id) {
+    _id
+    fullName
+    email
+    password
+  }
+}
+```
+
 - input:
 
 ```json
@@ -117,6 +149,14 @@ Description:
 
 Request
 
+- operation:
+
+```gql
+mutation AddSubscription($payload: SubscriptionInput) {
+  addSubscription(payload: $payload)
+}
+```
+
 - input:
 
 ```json
@@ -145,6 +185,24 @@ Description:
 - Get subscription for logged in user
 - Authentication required
 
+Request
+
+- operation:
+
+```gql
+query GetSubscription {
+  getSubscription {
+    _id
+    userId
+    midtransId
+    price
+    startDate
+    endDate
+    transactionTime
+  }
+}
+```
+
 Response (200):
 
 ```json
@@ -170,12 +228,206 @@ Description:
 - Check if user is subscribed
 - Authentication required
 
+Request
+
+- operation:
+
+```gql
+query Query {
+  isSubscribed
+}
+```
+
 Response (200):
 
 ```json
 {
   "data": {
     "isSubscribed": boolean
+  }
+}
+```
+
+## Chat
+
+### 1. Mutation: createChat
+
+Description:
+
+- Create new chat
+- Authentication required
+
+Request
+
+- operation:
+
+```gql
+mutation Mutation($payload: ChatInput) {
+  createChat(payload: $payload) {
+    _id
+    userId
+    messages {
+      sender
+      message
+    }
+  }
+}
+```
+
+- input:
+
+```json
+{
+  "payload": {
+    "userMessage": "string"
+  }
+}
+```
+
+Response (200):
+
+```json
+{
+  "data": {
+    "createChat": {
+      "_id": "string",
+      "userId": "string",
+      "messages": [
+        {
+          "sender": "Bot",
+          "message": "string"
+        },
+        {
+          "sender": "User",
+          "message": "string"
+        }
+      ]
+    }
+  }
+}
+```
+
+### 2. Mutation: getReplyFromBot
+
+Description:
+
+- Get reply from bot
+- Authentication required
+
+Request
+
+- operation:
+
+```gql
+mutation GetReplyFromBot($chatId: ID!) {
+  getReplyFromBot(chatId: $chatId) {
+    _id
+    userId
+    messages {
+      sender
+      message
+    }
+  }
+}
+```
+
+- input:
+
+```json
+{
+  "chatId": "string"
+}
+```
+
+Response (200):
+
+```json
+{
+  "data": {
+    "getReplyFromBot": {
+      "_id": "string",
+      "userId": "string",
+      "messages": [
+        {
+          "sender": "Bot",
+          "message": "string"
+        },
+        {
+          "sender": "user",
+          "message": "string"
+        },
+        {
+          "sender": "Bot",
+          "message": "string"
+        }
+      ]
+    }
+  }
+}
+```
+
+### 3. Mutation: saveReplyFromUser
+
+Description:
+
+- Save reply from user
+- Authentication required
+
+Request
+
+- operation:
+
+```gql
+mutation SaveReplyFromUser($payload: SaveChatInput) {
+  saveReplyFromUser(payload: $payload) {
+    _id
+    userId
+    messages {
+      sender
+      message
+    }
+  }
+}
+```
+
+- input:
+
+```json
+{
+  "payload": {
+    "chatId": "string",
+    "userMessage": "string"
+  }
+}
+```
+
+Response (200):
+
+```json
+{
+  "data": {
+    "saveReplyFromUser": {
+      "_id": "string",
+      "userId": "string",
+      "messages": [
+        {
+          "sender": "Bot",
+          "message": "string"
+        },
+        {
+          "sender": "user",
+          "message": "string"
+        },
+        {
+          "sender": "Bot",
+          "message": "string"
+        },
+        {
+          "sender": "User",
+          "message": "string"
+        }
+      ]
+    }
   }
 }
 ```
