@@ -56,9 +56,9 @@ const subscriptionResolvers = {
           ) {
             await Subscription.updateSubscriptionStatus(
               subscription.midtransId,
-              "inactive"
+              "paymentFailed"
             );
-            subscription.status = "inactive";
+            subscription.status = "paymentFailed";
           }
         }
 

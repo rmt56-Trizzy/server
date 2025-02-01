@@ -39,7 +39,7 @@ app.post("/midtrans-webhook", async (req, res) => {
       transaction_status === "expire" ||
       transaction_status === "cancel"
     ) {
-      await Subscription.updateSubscriptionStatus(order_id, "inactive");
+      await Subscription.updateSubscriptionStatus(order_id, "paymentFailed");
       console.log(`❌ Payment failed: Order ID ${order_id}`);
     }
 

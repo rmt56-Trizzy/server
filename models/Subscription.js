@@ -80,6 +80,10 @@ export class Subscription {
       if (currentDate >= startDate && currentDate <= endDate) {
         return true;
       } else {
+        await this.updateSubscriptionStatus(subscription.midtransId, "expired");
+        console.log(
+          `❌ Subscription expired: Order ID ${subscription.midtransId}`
+        );
         return false;
       }
     }
