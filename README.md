@@ -106,3 +106,76 @@ Response (200):
   }
 }
 ```
+
+## Subscription
+
+### 1. Mutation: addSubscription
+
+Description:
+
+- Add new subscription
+
+Request
+
+- input:
+
+```json
+{
+  "payload": {
+    "midtransId": "string",
+    "price": 50
+  }
+}
+```
+
+Response (200):
+
+```json
+{
+  "data": {
+    "addSubscription": "Subscription added successfully"
+  }
+}
+```
+
+### 2. Query: getSubscription
+
+Description:
+
+- Get subscription for logged in user
+- Authentication required
+
+Response (200):
+
+```json
+{
+  "data": {
+    "getSubscription": {
+      "_id": "string",
+      "userId": "string",
+      "midtransId": "string",
+      "price": integer,
+      "startDate": "string",
+      "endDate": "string",
+      "transactionTime": "string"
+    }
+  }
+}
+```
+
+### 3. Query: isSubscribed
+
+Description:
+
+- Check if user is subscribed
+- Authentication required
+
+Response (200):
+
+```json
+{
+  "data": {
+    "isSubscribed": boolean
+  }
+}
+```
