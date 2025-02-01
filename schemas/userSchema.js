@@ -1,4 +1,3 @@
-import { GraphQLError } from "graphql";
 import { User } from "../models/User.js";
 import { errorHandler } from "../helpers/errorHandler.js";
 
@@ -31,6 +30,7 @@ const userTypeDefs = `#graphql
         register(input: RegisterInput): String
         googleLogin(token: String!): AuthPayload
         login(login: LoginInput): AuthPayload
+        deductFreeTrial: Int
     }
 
     type Query {
@@ -94,6 +94,16 @@ const userResolvers = {
         return message;
       } catch (error) {
         console.log("🚀 ~ login: ~ error:", error);
+        errorHandler(error);
+      }
+    },
+    deductFreeTrial: async (_, __, context) => {
+      try {
+        const { _id: userId } = await context.authentication();
+        const response = await User.deductFreeTrial(userId);
+        return response;
+      } catch (error) {
+        console.log("🚀 ~ deductFreeTrial: ~ error:", error);
         errorHandler(error);
       }
     },
