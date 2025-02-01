@@ -48,6 +48,7 @@ export class Subscription {
       startDate,
       endDate,
       transactionTime,
+      status: "pending",
     });
     return "Subscription added successfully";
   }
@@ -72,7 +73,7 @@ export class Subscription {
 
   static async isSubscribed(userId) {
     const subscription = await this.getSubscription(userId);
-    if (subscription) {
+    if (subscription && subscription.status === "active") {
       const currentDate = new Date();
       const startDate = new Date(subscription.startDate);
       const endDate = new Date(subscription.endDate);
@@ -83,5 +84,11 @@ export class Subscription {
       }
     }
     return false;
+  }
+
+  // update Subscription.status upon receive update from webhook
+  static async updateSubscriptionStatus(midtransId, newStatus) {
+    const collection = this.getCollection();
+    await collection.updateOne({ midtransId }, { $set: { status: newStatus } });
   }
 }
