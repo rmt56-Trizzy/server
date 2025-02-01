@@ -36,6 +36,10 @@ const subscriptionResolvers = {
         const { _id: userId } = await context.authentication();
         const subscription = await Subscription.getSubscription(userId);
 
+        if (!subscription) {
+          return null; // No subscription found
+        }
+
         // ✅ Improve getSubscription: Check real-time status from Midtrans if pending.
         // If payment is pending, check Midtrans status
         if (subscription.status === "pending") {
@@ -43,7 +47,10 @@ const subscriptionResolvers = {
             subscription.midtransId
           );
 
-          if (statusResponse.transaction_status === "settlement") {
+          if (
+            statusResponse.transaction_status === "settlement" ||
+            statusResponse.transaction_status === "capture"
+          ) {
             // Update subscription status to active
             await Subscription.updateSubscriptionStatus(
               subscription.midtransId,
@@ -52,7 +59,9 @@ const subscriptionResolvers = {
             subscription.status = "active";
           } else if (
             statusResponse.transaction_status === "expire" ||
-            statusResponse.transaction_status === "cancel"
+            statusResponse.transaction_status === "cancel" ||
+            statusResponse.transaction_status === "deny" ||
+            statusResponse.transaction_status === "failure"
           ) {
             await Subscription.updateSubscriptionStatus(
               subscription.midtransId,
@@ -74,7 +83,7 @@ const subscriptionResolvers = {
         const subscription = await Subscription.isSubscribed(userId);
 
         if (!subscription) {
-          return null;
+          return false;
         }
 
         return subscription && subscription.status === "active";
@@ -92,7 +101,6 @@ const subscriptionResolvers = {
         // Generate a unique order_id
         const orderId = `SUB-${userId}-${Date.now()}`;
 
-        const { payload } = args;
         payload.userId = userId;
 
         // Generate a Midtrans transaction
@@ -104,9 +112,22 @@ const subscriptionResolvers = {
           customer_details: {
             user_id: userId,
           },
+          // callback dipakai kalau mau redirect ke thank you page
+          // callbacks: {
+          //   finish:
+          //     process.env.NODE_ENV === "production"
+          //       ? process.env.VITE_MIDTRANS_CALLBACK_PROD
+          //       : process.env.VITE_MIDTRANS_CALLBACK_DEV,
+          // },
         };
 
-        const transaction = await createTransaction(transactionDetails);
+        let transaction;
+        try {
+          transaction = await createTransaction(transactionDetails);
+        } catch (error) {
+          console.error("🚀 ~ Error creating Midtrans transaction:", error);
+          throw new Error("Failed to create Midtrans transaction");
+        }
 
         // Store transaction details in your DB
         await Subscription.addSubscription({
