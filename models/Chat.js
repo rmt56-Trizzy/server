@@ -74,7 +74,7 @@ export class Chat {
             sender: "Bot",
             message: "Hi, I am Velzy. How can I assist you today?",
           },
-          { sender: "user", message: userMessage },
+          { sender: "User", message: userMessage },
           {
             sender: "Bot",
             message: "Sure, what kind of activity are you interested in?",
