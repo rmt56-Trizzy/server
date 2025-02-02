@@ -67,6 +67,10 @@ export class Subscription {
       { userId },
       { sort: { transactionTime: -1 } }
     );
+    console.log(
+      "🚀 ~ Subscription ~ getSubscription ~ subscription:",
+      subscription
+    );
 
     return subscription;
   }

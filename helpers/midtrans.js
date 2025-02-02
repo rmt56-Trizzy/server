@@ -16,7 +16,7 @@ export const createTransaction = async (transactionDetails) => {
     const transaction = await midtrans.createTransaction(transactionDetails);
     return transaction;
   } catch (error) {
-    console.error("Midtrans Error:", error);
+    console.error(">>> Midtrans Error:", error);
     throw error;
   }
 };
@@ -26,11 +26,22 @@ export const createTransaction = async (transactionDetails) => {
  * @param {string} orderId
  */
 export const getTransactionStatus = async (orderId) => {
+  console.log("🚀 ~ getTransactionStatus ~ orderId:", orderId);
   try {
+    // console.log(
+    //   ">>????"
+    //   // await midtrans.transaction.status(
+    //   //   "SUB-679e41f0d75ac680b2a51eb4-1738430536113"
+    //   // )
+    //   // await midtrans.transaction.status(
+    //   //   "SUB-679e0287f719ef5ef6f8a7df-1738496146793"
+    //   // )
+    // );
+
     const status = await midtrans.transaction.status(orderId);
     return status;
   } catch (error) {
-    console.error("Midtrans Error:", error);
+    console.error("Midtrans Error: >>>", error);
     throw error;
   }
 };
