@@ -9,6 +9,10 @@ import {
   subscriptionResolvers,
 } from "./schemas/subscriptionSchema.js";
 import { chatTypeDefs, chatResolvers } from "./schemas/chatSchema.js";
+import {
+  recommendationTypeDefs,
+  recommendationResolvers,
+} from "./schemas/recommendationSchema.js";
 import { verifyToken } from "./helpers/jwt.js";
 import { User } from "./models/User.js";
 import { Subscription } from "./models/Subscription.js";
@@ -84,8 +88,18 @@ app.post("/midtrans-webhook", async (req, res) => {
 });
 
 const server = new ApolloServer({
-  typeDefs: [userTypeDefs, subscriptionTypeDefs, chatTypeDefs],
-  resolvers: [userResolvers, subscriptionResolvers, chatResolvers],
+  typeDefs: [
+    userTypeDefs,
+    subscriptionTypeDefs,
+    chatTypeDefs,
+    recommendationTypeDefs,
+  ],
+  resolvers: [
+    userResolvers,
+    subscriptionResolvers,
+    chatResolvers,
+    recommendationResolvers,
+  ],
   introspection: true,
 });
 

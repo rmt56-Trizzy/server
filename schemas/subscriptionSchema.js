@@ -86,13 +86,8 @@ const subscriptionResolvers = {
     isSubscribed: async (_, __, context) => {
       try {
         const { _id: userId } = await context.authentication();
-        const subscription = await Subscription.isSubscribed(userId);
-
-        if (!subscription) {
-          return false;
-        }
-
-        return subscription;
+        const response = await Subscription.isSubscribed(userId);
+        return response;
       } catch (error) {
         console.log("🚀 ~ isSubscribed: ~ error:", error);
         errorHandler(error);

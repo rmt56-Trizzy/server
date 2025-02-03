@@ -24,7 +24,10 @@ export class Chat {
         code: "BAD_REQUEST",
       };
     }
-    const response = await collection.findOne({ _id, userId });
+    const response = await collection.findOne({
+      _id: new ObjectId(_id),
+      userId: new ObjectId(userId),
+    });
     if (!response) {
       throw {
         message: "Chat not found",
@@ -74,7 +77,7 @@ export class Chat {
             sender: "Bot",
             message: "Hi, I am Velzy. How can I assist you today?",
           },
-          { sender: "user", message: userMessage },
+          { sender: "User", message: userMessage },
           {
             sender: "Bot",
             message: "Sure, what kind of activity are you interested in?",
@@ -116,7 +119,7 @@ export class Chat {
       };
     }
 
-    const botMessage = "How many days are planning for your trip?";
+    const botMessage = "How many days are you planning for your trip?";
     const newMessages = [{ sender: "Bot", message: botMessage }];
     const updatedChat = {
       ...chat,
