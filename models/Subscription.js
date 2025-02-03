@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { getDB } from "../config/mongodb.js";
 
 export class Subscription {
@@ -64,7 +65,7 @@ export class Subscription {
     }
 
     const subscription = await collection.findOne(
-      { userId },
+      { userId: new ObjectId(userId) },
       { sort: { transactionTime: -1 } }
     );
 
