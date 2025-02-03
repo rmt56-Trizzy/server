@@ -103,7 +103,24 @@ export class Recommendation {
       .map((message) => message.message)
       .join(". ");
     // console.log(userChat);
-    const response = await pplxRequestCities(userChat);
+    // const response = await pplxRequestCities(userChat);
+    let response;
+    let retries = 0;
+    const maxRetries = 3;
+
+    while (retries < maxRetries) {
+      try {
+        response = await pplxRequestCities(userChat);
+        break;
+      } catch (error) {
+        console.log(`Attempt ${retries + 1} failed:`, error);
+        retries++;
+        if (retries === maxRetries) {
+          throw new Error("Failed to get response after maximum retries");
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
+      }
+    }
     // const cities = response.match(/{.*?}/g).map((city) => JSON.parse(city));
     const trimmedResponse = response.match(/```json\n(.*?)```/s)[1];
     const cities = JSON.parse(trimmedResponse);
@@ -163,9 +180,28 @@ export class Recommendation {
     console.log(userChat);
     const city = recommendation.city;
     const country = recommendation.country;
-    const response = await pplxRequestItineraries(
-      `${userChat}. Please create the detail itineraries for ${city},${country}.`
-    );
+    // const response = await pplxRequestItineraries(
+    //   `${userChat}. Please create the detail itineraries for ${city},${country}.`
+    // );
+    let response;
+    let retries = 0;
+    const maxRetries = 3;
+
+    while (retries < maxRetries) {
+      try {
+        response = await pplxRequestItineraries(
+          `${userChat}. Please create the detail itineraries for ${city},${country}.`
+        );
+        break;
+      } catch (error) {
+        console.log(`Attempt ${retries + 1} failed:`, error);
+        retries++;
+        if (retries === maxRetries) {
+          throw new Error("Failed to get response after maximum retries");
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
+      }
+    }
     const trimmedResponse = response.match(/```json\n(.*?)```/s)[1];
     console.log(trimmedResponse);
     const completeItineraries = JSON.parse(trimmedResponse);

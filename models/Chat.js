@@ -2,6 +2,7 @@ import { getDB } from "../config/mongodb.js";
 import { Subscription } from "./Subscription.js";
 import { User } from "./User.js";
 import { ObjectId } from "mongodb";
+import { pplxRequestChat1, pplxRequestChat2 } from "../helpers/pplxai.js";
 
 export class Chat {
   static getCollection() {
@@ -70,17 +71,20 @@ export class Chat {
         };
       }
 
+      const bot1 = await pplxRequestChat1("Hi");
+      const bot2 = await pplxRequestChat2(userMessage);
+
       const chat = {
         userId,
         messages: [
           {
             sender: "Bot",
-            message: "Hi, I am Velzy. How can I assist you today?",
+            message: bot1,
           },
           { sender: "User", message: userMessage },
           {
             sender: "Bot",
-            message: "Sure, what kind of activity are you interested in?",
+            message: bot2,
           },
         ],
       };
@@ -119,7 +123,10 @@ export class Chat {
       };
     }
 
-    const botMessage = "How many days are you planning for your trip?";
+    const allMessages = chat.messages.map((message) => message.message);
+    const allMessagesJoined = allMessages.join(". ");
+    const botMessage = await pplxRequestChat2(allMessagesJoined);
+    // const botMessage = "How many days are you planning for your trip?";
     const newMessages = [{ sender: "Bot", message: botMessage }];
     const updatedChat = {
       ...chat,
@@ -166,6 +173,7 @@ export class Chat {
         code: "UNAUTHORIZED",
       };
     }
+
     const newMessages = [{ sender: "User", message: userMessage }];
     const updatedChat = {
       ...chat,

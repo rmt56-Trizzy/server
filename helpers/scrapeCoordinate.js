@@ -4,25 +4,25 @@ export const scrapeCoordinate = async (location, city) => {
   try {
     //sleep for 3 seconds
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    const q = `${location.split(" ").join("%20")}%20${city
-      .split(" ")
-      .join("%20")}`;
-    console.log(q);
-    const response = await axios.get(
-      `https://nominatim.openstreetmap.org/search.php?q=${q}&polygon_geojson=1&format=jsonv2`
+    const response1 = await axios.get(
+      `https://nominatim.openstreetmap.org/search.php?q=${location
+        .split(" ")
+        .join("%20")}&polygon_geojson=1&format=jsonv2`
     );
-    if (response.data.length > 0) {
+    if (response1.data.length > 0) {
       const coordinates = [
-        parseFloat(response.data[0].lat),
-        parseFloat(response.data[0].lon),
+        parseFloat(response1.data[0].lat),
+        parseFloat(response1.data[0].lon),
       ];
       console.log("coordinates1", coordinates);
       return coordinates;
     } else {
+      const q = `${location.split(" ").join("%20")}%20${city
+        .split(" ")
+        .join("%20")}`;
+      console.log(q);
       const response2 = await axios.get(
-        `https://nominatim.openstreetmap.org/search.php?q=${city
-          .split(" ")
-          .join("%20")}&polygon_geojson=1&format=jsonv2`
+        `https://nominatim.openstreetmap.org/search.php?q=${q}&polygon_geojson=1&format=jsonv2`
       );
       if (response2.data.length > 0) {
         const coordinates = [
@@ -31,8 +31,22 @@ export const scrapeCoordinate = async (location, city) => {
         ];
         console.log("coordinates2", coordinates);
         return coordinates;
+      } else {
+        const response3 = await axios.get(
+          `https://nominatim.openstreetmap.org/search.php?q=${city
+            .split(" ")
+            .join("%20")}&polygon_geojson=1&format=jsonv2`
+        );
+        if (response3.data.length > 0) {
+          const coordinates = [
+            parseFloat(response3.data[0].lat),
+            parseFloat(response3.data[0].lon),
+          ];
+          console.log("coordinates3", coordinates);
+          return coordinates;
+        }
+        return [0, 0]; // Return default coordinates if no results found
       }
-      return [0, 0]; // Return default coordinates if no results found
     }
   } catch (error) {
     // console.error("Error fetching coordinates:", error);
