@@ -34,7 +34,9 @@ const subscriptionResolvers = {
     getSubscription: async (_, __, context) => {
       try {
         const { _id: userId } = await context.authentication();
+        console.log("🚀 ~ getSubscription: ~ userId:", userId);
         const subscription = await Subscription.getSubscription(userId);
+        console.log("🚀 ~ getSubscription: ~ subscription:", subscription);
 
         if (!subscription) {
           return null; // No subscription found
@@ -46,17 +48,21 @@ const subscriptionResolvers = {
           const statusResponse = await getTransactionStatus(
             subscription.midtransId
           );
+          console.log(
+            "🚀 ~ getSubscription: ~ statusResponse:",
+            statusResponse
+          );
 
           if (
             statusResponse.transaction_status === "settlement" ||
             statusResponse.transaction_status === "capture"
           ) {
-            // Update subscription status to active
+            // Update subscription status to paid
             await Subscription.updateSubscriptionStatus(
               subscription.midtransId,
-              "active"
+              "paid"
             );
-            subscription.status = "active";
+            subscription.status = "paid";
           } else if (
             statusResponse.transaction_status === "expire" ||
             statusResponse.transaction_status === "cancel" ||

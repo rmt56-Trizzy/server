@@ -1,4 +1,5 @@
 import "dotenv/config";
+import crypto from "crypto";
 import { ApolloServer } from "@apollo/server";
 // Apollo Standalone Server does not allow integrating Express routes, you need to switch to Apollo Server with Express.
 // import { startStandaloneServer } from "@apollo/server/standalone";
@@ -31,26 +32,52 @@ app.use(bodyParser.json());
 // Midtrans Webhook Route (Before Apollo Middleware)
 app.post("/midtrans-webhook", async (req, res) => {
   try {
-    const { order_id, transaction_status } = req.body;
+    const {
+      transaction_status,
+      fraudStatus,
+      signature_key,
+      status_code,
+      order_id,
+      gross_amount,
+    } = req.body;
 
-    // Verify transaction status with Midtrans API
-    const statusResponse = await getTransactionStatus(order_id);
+    const serverKey = process.env.MIDTRANS_SERVER_KEY;
+
+    // Sha512 signature_key = SHA512(order_id + status_code + gross_amount + server_key)
+    const mySignatureKey = crypto
+      .createHash("sha512")
+      .update(order_id + status_code + gross_amount.toString() + serverKey)
+      .digest("hex");
+
+    console.log("🚀 ~ app.post ~ mySignatureKey:", mySignatureKey);
+    console.log("🚀 ~ app.post ~ signature_key:", signature_key);
+
+    if (mySignatureKey !== signature_key) {
+      return res.status(403).json({ message: "Invalid signature" });
+    }
+
+    console.log("🚀 ~ app.post ~ mySignatureKey === signature_key:");
 
     // https://docs.midtrans.com/docs/https-notification-webhooks#b-status-definition-b
-    if (
-      transaction_status === "settlement" ||
-      transaction_status === "capture"
-    ) {
-      await Subscription.updateSubscriptionStatus(order_id, "active");
+    // https://docs.midtrans.com/docs/https-notification-webhooks#b-verifying-notification-authenticity-b
+    if (transaction_status === "capture") {
+      if (fraudStatus == "accept") {
+        await Subscription.updateSubscriptionStatus(order_id, "paid");
+        console.log(`✅ Payment successful: Order ID ${order_id}`);
+        return res
+          .status(200)
+          .json({ message: "Payment captured successfully" });
+      }
+    } else if (transaction_status === "settlement") {
+      await Subscription.updateSubscriptionStatus(order_id, "paid");
       console.log(`✅ Payment successful: Order ID ${order_id}`);
+      return res.status(200).json({ message: "Payment settled successfully" });
     } else if (
-      transaction_status === "expire" ||
-      transaction_status === "cancel" ||
-      transaction_status === "deny" ||
-      transaction_status === "failure"
+      ["expire", "cancel", "deny", "failure"].includes(transaction_status)
     ) {
       await Subscription.updateSubscriptionStatus(order_id, "paymentFailed");
       console.log(`❌ Payment failed: Order ID ${order_id}`);
+      return res.status(200).json({ message: "Payment failed" });
     }
 
     res.status(200).json({ message: "Webhook received successfully" });
@@ -75,43 +102,6 @@ const server = new ApolloServer({
   ],
   introspection: true,
 });
-
-// const { url } = await startStandaloneServer(server, {
-//   listen: { port: process.env.PORT || 3005 },
-//   context: async ({ req, res }) => {
-//     const authN = async () => {
-//       const bearerToken = req.headers.authorization;
-//       if (!bearerToken) {
-//         throw new Error(
-//           JSON.stringify({
-//             message: "You must be logged in",
-//             code: "UNAUTHORIZED",
-//           })
-//         );
-//       }
-//       const [type, token] = bearerToken.split(" ");
-
-//       const { userId } = verifyToken(token);
-//       if (!userId) {
-//         throw new Error(
-//           JSON.stringify({ message: "Invalid token", code: "UNAUTHORIZED" })
-//         );
-//       }
-//       const user = await User.getUserById(userId);
-//       if (!user) {
-//         throw new Error(
-//           JSON.stringify({ message: "Invalid token", code: "UNAUTHORIZED" })
-//         );
-//       }
-//       const { password, ...rest } = user;
-//       return rest;
-//     };
-
-//     return {
-//       authentication: () => authN(),
-//     };
-//   },
-// });
 
 // 🛠 Apply Apollo Middleware to Express
 async function startServer() {
