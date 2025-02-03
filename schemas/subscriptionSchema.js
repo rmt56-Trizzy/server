@@ -57,12 +57,12 @@ const subscriptionResolvers = {
             statusResponse.transaction_status === "settlement" ||
             statusResponse.transaction_status === "capture"
           ) {
-            // Update subscription status to active
+            // Update subscription status to paid
             await Subscription.updateSubscriptionStatus(
               subscription.midtransId,
-              "active"
+              "paid"
             );
-            subscription.status = "active";
+            subscription.status = "paid";
           } else if (
             statusResponse.transaction_status === "expire" ||
             statusResponse.transaction_status === "cancel" ||
