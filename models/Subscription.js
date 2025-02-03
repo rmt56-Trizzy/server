@@ -77,14 +77,13 @@ export class Subscription {
 
   static async isSubscribed(userId) {
     const subscription = await this.getSubscription(userId);
-    if (subscription && subscription.status === "active") {
+    if (subscription && subscription.status === "paid") {
       const currentDate = new Date();
       const startDate = new Date(subscription.startDate);
       const endDate = new Date(subscription.endDate);
       if (currentDate >= startDate && currentDate <= endDate) {
         return true;
       } else {
-        await this.updateSubscriptionStatus(subscription.midtransId, "expired");
         console.log(
           `❌ Subscription expired: Order ID ${subscription.midtransId}`
         );
