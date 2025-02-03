@@ -113,26 +113,20 @@ async function startServer() {
         const authN = async () => {
           const bearerToken = req.headers.authorization;
           if (!bearerToken) {
-            throw new Error(
-              JSON.stringify({
-                message: "You must be logged in",
-                code: "UNAUTHORIZED",
-              })
-            );
+            throw {
+              message: "You must be logged in",
+              code: "UNAUTHORIZED",
+            };
           }
           const [type, token] = bearerToken.split(" ");
 
           const { userId } = verifyToken(token);
           if (!userId) {
-            throw new Error(
-              JSON.stringify({ message: "Invalid token", code: "UNAUTHORIZED" })
-            );
+            throw { message: "Invalid token", code: "UNAUTHORIZED" };
           }
           const user = await User.getUserById(userId);
           if (!user) {
-            throw new Error(
-              JSON.stringify({ message: "Invalid token", code: "UNAUTHORIZED" })
-            );
+            throw { message: "Invalid token", code: "UNAUTHORIZED" };
           }
           const { password, ...rest } = user;
           return rest;
