@@ -63,35 +63,33 @@ export class Chat {
           code: "BAD_REQUEST",
         };
       }
-
-      if (!userMessage) {
-        throw {
-          message: "Message cannot be empty",
-          code: "BAD_REQUEST",
-        };
-      }
-
-      const bot1 = await pplxRequestChat1("Hi");
-      const bot2 = await pplxRequestChat2(userMessage);
-
-      const chat = {
-        userId,
-        messages: [
-          {
-            sender: "Bot",
-            message: bot1,
-          },
-          { sender: "User", message: userMessage },
-          {
-            sender: "Bot",
-            message: bot2,
-          },
-        ],
-      };
-
-      await collection.insertOne(chat);
-      return chat;
     }
+    if (!userMessage) {
+      throw {
+        message: "Message cannot be empty",
+        code: "BAD_REQUEST",
+      };
+    }
+    const bot1 = await pplxRequestChat1("Hi");
+    const bot2 = await pplxRequestChat2(userMessage);
+
+    const chat = {
+      userId,
+      messages: [
+        {
+          sender: "Bot",
+          message: bot1,
+        },
+        { sender: "User", message: userMessage },
+        {
+          sender: "Bot",
+          message: bot2,
+        },
+      ],
+    };
+
+    await collection.insertOne(chat);
+    return chat;
   }
 
   static async getReplyFromBot(payload) {

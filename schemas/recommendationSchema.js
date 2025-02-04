@@ -52,7 +52,7 @@ const recommendationTypeDefs = `#graphql
         getRecommendations(chatId: ID!): [Recommendation]
         getRecommendationDetails(_id: ID!): Recommendation
         getMyTrips: [Recommendation]
-        checkViewAccess(payload: CheckViewAccessInput): Recommendation
+        checkViewAccess(payload: CheckViewAccessInput): Boolean
     }
     type Mutation {
         addGeneralRecommendationToMyTrip(generalRecommendationId: ID!): String
@@ -201,6 +201,7 @@ const recommendationResolvers = {
     generateViewAccess: async (_, args, context) => {
       try {
         const { recommendationId } = args;
+        const { _id: userId } = await context.authentication();
         const response = await Recommendation.generateViewAccess(
           recommendationId
         );

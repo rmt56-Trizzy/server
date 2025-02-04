@@ -76,13 +76,16 @@ export class Recommendation {
       chatId: new ObjectId(generalRecommendationId),
       city: generalRecommendationDetails.city,
       country: generalRecommendationDetails.country,
-      countryode: generalRecommendationDetails.countryCode,
+      countryCode: generalRecommendationDetails.countryCode,
       cityImage: generalRecommendationDetails.cityImage,
       daysCount: generalRecommendationDetails.daysCount,
       itineraries: generalRecommendationDetails.itineraries,
     };
-    await collection.insertOne(newRecommendation);
-    return `Successfully added to your trip`;
+    const response = await collection.insertOne(newRecommendation);
+    //get the id of the new recommendation
+    console.log(response);
+    const recommendationId = response.insertedId;
+    return `${recommendationId}`;
   }
 
   static async generateRecommendations(payload) {
@@ -219,7 +222,7 @@ export class Recommendation {
         locations: await Promise.all(
           itinerary.locations.map(async (location) => ({
             ...location,
-            coordinates: await scrapeCoordinate(location.name, city),
+            coordinates: await scrapeCoordinate(location.name, city, country),
           }))
         ),
       }))
@@ -301,7 +304,7 @@ export class Recommendation {
     }
     const itinerary = await collection.findOne({
       userId: new ObjectId(userId),
-      _id: new ObjectId(itineraryId),
+      _id: new ObjectId(recommendationId),
     });
     if (!itinerary) {
       throw {
@@ -309,9 +312,19 @@ export class Recommendation {
         code: "NOT_FOUND",
       };
     }
+    let parsedItineraries;
+
+    try {
+      parsedItineraries = JSON.parse(newItineraries);
+    } catch (error) {
+      parsedItineraries = JSON.parse(newItineraries.replace(/'/g, '"'));
+    }
+
+    console.log(parsedItineraries);
+
     await collection.updateOne(
-      { _id: new ObjectId(itineraryId) },
-      { $set: { itineraries: JSON.parse(newItineraries) } }
+      { _id: new ObjectId(recommendationId) },
+      { $set: { itineraries: parsedItineraries } }
     );
     return `Successfully edited itinerary`;
   }
@@ -324,9 +337,11 @@ export class Recommendation {
     return response;
   }
 
-  static async generateViewAccess(id) {
+  static async generateViewAccess(recommendationId) {
     const collection = this.getCollection();
-    const response = await collection.findOne({ _id: new ObjectId(id) });
+    const response = await collection.findOne({
+      _id: new ObjectId(recommendationId),
+    });
     if (!response) {
       throw {
         message: "Recommendation not found",
@@ -338,7 +353,7 @@ export class Recommendation {
     }
     const viewAccess = uid(20);
     await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(recommendationId) },
       { $set: { viewAccess } }
     );
     return viewAccess;
@@ -356,13 +371,16 @@ export class Recommendation {
         code: "NOT_FOUND",
       };
     }
-    if (response.viewAccess !== viewAccess) {
+    if (!viewAccess) {
       throw {
-        message: "Invalid view access",
-        code: "UNAUTHORIZED",
+        message: "View access is required",
+        code: "BAD_REQUEST",
       };
     }
-    return response;
+    if (response.viewAccess !== viewAccess) {
+      return false;
+    }
+    return true;
   }
 
   static async shareItinerary(payload) {
@@ -383,20 +401,22 @@ export class Recommendation {
     const recommendation = await collection.findOne({
       _id: new ObjectId(recommendationId),
     });
-
-    if (recommendation.userId !== userId) {
+    console.log("recommendation", recommendation.userId);
+    console.log("userId", userId);
+    if (recommendation.userId.toString() !== userId.toString()) {
       throw {
         message: "You are not authorized to share this itinerary",
         code: "UNAUTHORIZED",
       };
     }
+    let viewAccess;
     if (!recommendation.viewAccess) {
-      const viewAccess = await this.generateViewAccess(recommendationId);
+      viewAccess = await this.generateViewAccess(recommendationId);
     } else {
       viewAccess = recommendation.viewAccess;
     }
     //sendMail
-    const user = await User.getUserDetails(userId);
+    const user = await User.getUserById(userId);
     const daysCount = recommendation.daysCount;
     const city = recommendation.city;
     const country = recommendation.country;
@@ -405,6 +425,7 @@ export class Recommendation {
     const link = `${process.env.BASE_CLIENT_URL}/recommendation/${recommendationId}?view-access=${viewAccess}`;
     try {
       sendMail(email, subject, fullName, city, country, daysCount, link);
+      return "Email sent successfully";
     } catch (error) {
       console.log(error);
       throw {

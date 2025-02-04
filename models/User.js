@@ -111,7 +111,7 @@ export class User {
     }
 
     const access_token = signToken({
-      id: user._id,
+      userId: user._id,
     });
 
     const result = {

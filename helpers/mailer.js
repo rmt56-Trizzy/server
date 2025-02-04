@@ -23,7 +23,7 @@ export function sendMail(
     },
   });
 
-  const source = fs.readFileSync("./emailFormat.html", "utf8");
+  const source = fs.readFileSync("./helpers/emailFormat.html", "utf8");
   const template = handlebars.compile(source);
   const replacements = {
     fullName: fullName,
