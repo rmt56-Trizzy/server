@@ -304,7 +304,7 @@ export class Recommendation {
     }
     const itinerary = await collection.findOne({
       userId: new ObjectId(userId),
-      _id: new ObjectId(itineraryId),
+      _id: new ObjectId(recommendationId),
     });
     if (!itinerary) {
       throw {
@@ -312,9 +312,19 @@ export class Recommendation {
         code: "NOT_FOUND",
       };
     }
+    let parsedItineraries;
+
+    try {
+      parsedItineraries = JSON.parse(newItineraries);
+    } catch (error) {
+      parsedItineraries = JSON.parse(newItineraries.replace(/'/g, '"'));
+    }
+
+    console.log(parsedItineraries);
+
     await collection.updateOne(
-      { _id: new ObjectId(itineraryId) },
-      { $set: { itineraries: JSON.parse(newItineraries) } }
+      { _id: new ObjectId(recommendationId) },
+      { $set: { itineraries: parsedItineraries } }
     );
     return `Successfully edited itinerary`;
   }
