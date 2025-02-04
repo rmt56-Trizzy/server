@@ -36,7 +36,6 @@ async function connect() {
 }
 
 const getDB = () => {
-  console.log("🚀 ~ getDB ~ db:", db);
   if (!db) connect();
 
   return db;
