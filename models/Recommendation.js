@@ -76,13 +76,16 @@ export class Recommendation {
       chatId: new ObjectId(generalRecommendationId),
       city: generalRecommendationDetails.city,
       country: generalRecommendationDetails.country,
-      countryode: generalRecommendationDetails.countryCode,
+      countryCode: generalRecommendationDetails.countryCode,
       cityImage: generalRecommendationDetails.cityImage,
       daysCount: generalRecommendationDetails.daysCount,
       itineraries: generalRecommendationDetails.itineraries,
     };
-    await collection.insertOne(newRecommendation);
-    return `Successfully added to your trip`;
+    const response = await collection.insertOne(newRecommendation);
+    //get the id of the new recommendation
+    console.log(response);
+    const recommendationId = response.insertedId;
+    return `${recommendationId}`;
   }
 
   static async generateRecommendations(payload) {
