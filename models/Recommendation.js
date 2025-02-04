@@ -222,7 +222,7 @@ export class Recommendation {
         locations: await Promise.all(
           itinerary.locations.map(async (location) => ({
             ...location,
-            coordinates: await scrapeCoordinate(location.name, city),
+            coordinates: await scrapeCoordinate(location.name, city, country),
           }))
         ),
       }))
