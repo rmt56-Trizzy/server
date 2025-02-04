@@ -201,6 +201,7 @@ const recommendationResolvers = {
     generateViewAccess: async (_, args, context) => {
       try {
         const { recommendationId } = args;
+        const { _id: userId } = await context.authentication();
         const response = await Recommendation.generateViewAccess(
           recommendationId
         );

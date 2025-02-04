@@ -337,9 +337,11 @@ export class Recommendation {
     return response;
   }
 
-  static async generateViewAccess(id) {
+  static async generateViewAccess(recommendationId) {
     const collection = this.getCollection();
-    const response = await collection.findOne({ _id: new ObjectId(id) });
+    const response = await collection.findOne({
+      _id: new ObjectId(recommendationId),
+    });
     if (!response) {
       throw {
         message: "Recommendation not found",
@@ -351,7 +353,7 @@ export class Recommendation {
     }
     const viewAccess = uid(20);
     await collection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(recommendationId) },
       { $set: { viewAccess } }
     );
     return viewAccess;
@@ -396,20 +398,22 @@ export class Recommendation {
     const recommendation = await collection.findOne({
       _id: new ObjectId(recommendationId),
     });
-
-    if (recommendation.userId !== userId) {
+    console.log("recommendation", recommendation.userId);
+    console.log("userId", userId);
+    if (recommendation.userId.toString() !== userId.toString()) {
       throw {
         message: "You are not authorized to share this itinerary",
         code: "UNAUTHORIZED",
       };
     }
+    let viewAccess;
     if (!recommendation.viewAccess) {
-      const viewAccess = await this.generateViewAccess(recommendationId);
+      viewAccess = await this.generateViewAccess(recommendationId);
     } else {
       viewAccess = recommendation.viewAccess;
     }
     //sendMail
-    const user = await User.getUserDetails(userId);
+    const user = await User.getUserById(userId);
     const daysCount = recommendation.daysCount;
     const city = recommendation.city;
     const country = recommendation.country;
@@ -418,6 +422,7 @@ export class Recommendation {
     const link = `${process.env.BASE_CLIENT_URL}/recommendation/${recommendationId}?view-access=${viewAccess}`;
     try {
       sendMail(email, subject, fullName, city, country, daysCount, link);
+      return "Email sent successfully";
     } catch (error) {
       console.log(error);
       throw {
