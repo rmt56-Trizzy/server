@@ -1,8 +1,8 @@
-const nodemailer = require("nodemailer");
-const handlebars = require("handlebars");
-const fs = require("fs");
-require("dotenv").config();
-
+import nodemailer from "nodemailer";
+import handlebars from "handlebars";
+import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
 export function sendMail(
   to,
   subject,
