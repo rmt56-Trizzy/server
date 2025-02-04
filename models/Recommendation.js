@@ -9,6 +9,8 @@ import {
   pplxRequestCities,
   pplxRequestItineraries,
 } from "../helpers/pplxai.js";
+import { sendMail } from "../helpers/mailer.js";
+import { config } from "dotenv";
 
 export class Recommendation {
   static getGeneralCollection() {
@@ -325,5 +327,54 @@ export class Recommendation {
       };
     }
     return response;
+  }
+
+  static async shareItinerary(payload) {
+    const { recommendationId, email, userId } = payload;
+    const collection = this.getCollection();
+    if (!userId) {
+      throw {
+        message: "You must be logged in",
+        code: "UNAUTHORIZED",
+      };
+    }
+    if (!recommendationId) {
+      throw {
+        message: "Recommendation ID is required",
+        code: "BAD_REQUEST",
+      };
+    }
+    const recommendation = await collection.findOne({
+      _id: new ObjectId(recommendationId),
+    });
+
+    if (recommendation.userId !== userId) {
+      throw {
+        message: "You are not authorized to share this itinerary",
+        code: "UNAUTHORIZED",
+      };
+    }
+    if (!recommendation.viewAccess) {
+      const viewAccess = await this.generateViewAccess(recommendationId);
+    } else {
+      viewAccess = recommendation.viewAccess;
+    }
+    //sendMail
+    const user = await User.getUserDetails(userId);
+    const daysCount = recommendation.daysCount;
+    const city = recommendation.city;
+    const country = recommendation.country;
+    const fullName = user.fullName;
+    const subject = `Trizzy: ${daysCount} days in ${city}, ${country}`;
+    const link = `${process.env.BASE_CLIENT_URL}/recommendation/${recommendationId}?view-access=${viewAccess}`;
+    try {
+      sendMail(email, subject, fullName, city, country, daysCount, link);
+    } catch (error) {
+      console.log(error);
+      throw {
+        message: "Error sending email",
+        code: "BAD_REQUEST",
+      };
+    }
   }
 }

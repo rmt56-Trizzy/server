@@ -42,6 +42,10 @@ const recommendationTypeDefs = `#graphql
         recommendationId: ID!
         viewAccess: String
     }
+    input ShareInput {
+        recommendationId: ID!
+        email: String
+    }
     type Query {
         getGeneralRecommendations: [GeneralRecommendation]
         getGeneralRecommendationDetails(_id: ID!): GeneralRecommendation
@@ -57,6 +61,7 @@ const recommendationTypeDefs = `#graphql
         addRecommendationToMyTrip(recommendationId: ID!): String
         editItinerary(payload: EditInput): String
         generateViewAccess(recommendationId: ID!): String
+        shareItinerary(payload: ShareInput): String
     }
 `;
 
@@ -202,6 +207,18 @@ const recommendationResolvers = {
         return response;
       } catch (error) {
         console.log("🚀 ~ generateViewAccess: ~ error:", error);
+        errorHandler(error);
+      }
+    },
+    shareItinerary: async (_, args, context) => {
+      try {
+        const { payload } = args;
+        const { _id: userId } = await context.authentication();
+        payload.userId = userId;
+        const response = await Recommendation.shareItinerary(payload);
+        return response;
+      } catch (error) {
+        console.log("🚀 ~ shareItinerary: ~ error:", error);
         errorHandler(error);
       }
     },
