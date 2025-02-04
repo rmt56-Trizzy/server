@@ -371,13 +371,16 @@ export class Recommendation {
         code: "NOT_FOUND",
       };
     }
-    if (response.viewAccess !== viewAccess) {
+    if (!viewAccess) {
       throw {
-        message: "Invalid view access",
-        code: "UNAUTHORIZED",
+        message: "View access is required",
+        code: "BAD_REQUEST",
       };
     }
-    return response;
+    if (response.viewAccess !== viewAccess) {
+      return false;
+    }
+    return true;
   }
 
   static async shareItinerary(payload) {

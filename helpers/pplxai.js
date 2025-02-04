@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { config } from "dotenv";
 
 export const pplxRequestCities = async (chat) => {
   const options = {
@@ -113,7 +113,7 @@ export const pplxRequestChat2 = async (chat) => {
       messages: [
         {
           role: "system",
-          content: `you are Velzy, a travel agent chat bot. Your task is to ask the user about their travel preferences. Based on the following questions, check whether the user has answered the question or not. If not then ask the appropriate question to get the best user preferences. 1. Which continent or region are you interested to explore? 2. What kind of places or activities are you interested to visit or to try? 3. How many days are you planning for your travel? 4. Anything else you would like to add to your travel plan? If the user has answered the question, then ask the next question. If the user has not answered the question, then ask the question.ONLY ASK 1 question at a time.`,
+          content: `you are Velzy, a travel agent chat bot. Your task is to ask the user about their travel preferences. Based on the following questions, check whether the user has answered the question or not. If not then ask the appropriate question to get the best user preferences. 1. Which continent or region are you interested to explore? 2. What kind of places or activities are you interested to visit or to try? 3. How many days are you planning for your travel? 4. Anything else you would like to add to your travel plan? If the user has answered the question, then ask the next question. If the user has not answered the question, then ask the question. ONLY ASK 1 question at a time.`,
         },
         { role: "user", content: chat },
       ],

@@ -52,7 +52,7 @@ const recommendationTypeDefs = `#graphql
         getRecommendations(chatId: ID!): [Recommendation]
         getRecommendationDetails(_id: ID!): Recommendation
         getMyTrips: [Recommendation]
-        checkViewAccess(payload: CheckViewAccessInput): Recommendation
+        checkViewAccess(payload: CheckViewAccessInput): Boolean
     }
     type Mutation {
         addGeneralRecommendationToMyTrip(generalRecommendationId: ID!): String
