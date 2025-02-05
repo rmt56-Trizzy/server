@@ -147,4 +147,30 @@ async function startServer() {
 }
 
 // ✅ Start the server
-startServer();
+// if (process.env.NODE_ENV !== "test") {
+//   const PORT = process.env.PORT || 3005;
+//   httpServer.listen(PORT, () => {
+//     console.log(`🚀 GraphQL Server ready at: http://localhost:${PORT}/graphql`);
+//     console.log(
+//       `📡 Webhook running at: http://localhost:${PORT}/midtrans-webhook`
+//     );
+//   });
+// }
+
+if (process.env.NODE_ENV !== "test" && !httpServer.listening) {
+  const PORT = process.env.PORT || 3005;
+  httpServer.listen(PORT, () => {
+    console.log(`🚀 GraphQL Server ready at: http://localhost:${PORT}/graphql`);
+    console.log(
+      `📡 Webhook running at: http://localhost:${PORT}/midtrans-webhook`
+    );
+  });
+}
+
+// When running tests with Jest/Supertest, we manually start the server inside our test file (beforeAll hook).
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
+
+// ✅ Export `app` & `startServer`
+export { app, startServer };

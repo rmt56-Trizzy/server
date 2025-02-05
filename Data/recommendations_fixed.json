@@ -3,6 +3,7 @@
     "city": "Jakarta",
     "country": "Indonesia",
     "countryCode": "ID",
+    "daysCount": 3,
     "itineraries": [
       {
         "day": "Day 1",
@@ -110,6 +111,7 @@
     "city": "Seoul",
     "country": "South Korea",
     "countryCode": "KR",
+    "daysCount": 4,
     "itineraries": [
       {
         "day": "Day 1",
@@ -278,6 +280,7 @@
     "city": "Tokyo",
     "country": "Japan",
     "countryCode": "JP",
+    "daysCount": 5,
     "itineraries": [
       {
         "day": "Day 1",
@@ -472,6 +475,7 @@
     "city": "London",
     "country": "United Kingdom",
     "countryCode": "GB",
+    "daysCount": 4,
     "itineraries": [
       {
         "day": "Day 1",
@@ -619,6 +623,7 @@
     "city": "Bangkok",
     "country": "Thailand",
     "countryCode": "TH",
+    "daysCount": 3,
     "itineraries": [
       {
         "day": "Day 1",

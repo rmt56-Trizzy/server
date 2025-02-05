@@ -48,6 +48,11 @@ const subscriptionResolvers = {
           const statusResponse = await getTransactionStatus(
             subscription.midtransId
           );
+
+          // const statusResponse = {
+          //   transaction_status: "settlement",
+          // };
+
           console.log(
             "🚀 ~ getSubscription: ~ statusResponse:",
             statusResponse

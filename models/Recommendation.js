@@ -5,10 +5,7 @@ import { ObjectId } from "mongodb";
 import { getImages, getCityImages } from "../helpers/scrapeImage.js";
 import { scrapeCoordinate } from "../helpers/scrapeCoordinate.js";
 import { uid } from "uid";
-import {
-  pplxRequestCities,
-  pplxRequestItineraries,
-} from "../helpers/pplxai.js";
+import PplxAi from "../helpers/pplxai.js";
 import { sendMail } from "../helpers/mailer.js";
 import { config } from "dotenv";
 
@@ -27,6 +24,12 @@ export class Recommendation {
 
   static async getGeneralRecommendationDetails(id) {
     const collection = this.getGeneralCollection();
+    if (!id) {
+      throw {
+        message: "Id is required",
+        code: "BAD_REQUEST",
+      };
+    }
     const response = await collection.findOne({ _id: new ObjectId(id) });
     return response;
   }
@@ -109,29 +112,38 @@ export class Recommendation {
       .join(". ");
     // console.log(userChat);
     // const response = await pplxRequestCities(userChat);
-    let response;
-    let retries = 0;
-    const maxRetries = 3;
+    // let response;
+    // let retries = 0;
+    // const maxRetries = 3;
 
-    while (retries < maxRetries) {
-      try {
-        response = await pplxRequestCities(userChat);
-        break;
-      } catch (error) {
-        console.log(`Attempt ${retries + 1} failed:`, error);
-        retries++;
-        if (retries === maxRetries) {
-          throw new Error("Failed to get response after maximum retries");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
-      }
-    }
-    // const cities = response.match(/{.*?}/g).map((city) => JSON.parse(city));
-    const trimmedResponse = response.match(/```json\n(.*?)```/s)[1];
-    const cities = JSON.parse(trimmedResponse);
-    //get images for each city
-    const citiesWithImages = await getCityImages(cities);
+    // while (retries < maxRetries) {
+    //   try {
+    //     response = await PplxAi.pplxRequestCities(userChat);
+    //     break;
+    //   } catch (error) {
+    //     console.log(`Attempt ${retries + 1} failed:`, error);
+    //     retries++;
+    //     if (retries === maxRetries) {
+    //       throw new Error("Failed to get response after maximum retries");
+    //     }
+    //     await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
+    //   }
+    // }
+    // // const cities = response.match(/{.*?}/g).map((city) => JSON.parse(city));
+    // const trimmedResponse = response.match(/```json\n(.*?)```/s)[1];
+    // const cities = JSON.parse(trimmedResponse);
+    // //get images for each city
+    // const citiesWithImages = await getCityImages(cities);
     // insert into Recommendations collection
+    const citiesWithImages = [
+      {
+        city: "Bandung",
+        country: "Indonesia",
+        countryCode: "ID",
+        cityImage:
+          "https://www.agoda.com/wp-content/uploads/2024/07/Featured-image-Dusun-Bambu-Family-Leisure-Park-in-Bandung-West-Java-Indonesia.jpg",
+      },
+    ];
     const newRecommendations = citiesWithImages.map((city) => {
       return {
         chatId: new ObjectId(chatId),
@@ -188,46 +200,61 @@ export class Recommendation {
     // const response = await pplxRequestItineraries(
     //   `${userChat}. Please create the detail itineraries for ${city},${country}.`
     // );
-    let response;
-    let retries = 0;
-    const maxRetries = 3;
+    // let response;
+    // let retries = 0;
+    // const maxRetries = 3;
 
-    while (retries < maxRetries) {
-      try {
-        response = await pplxRequestItineraries(
-          `${userChat}. Please create the detail itineraries for ${city},${country}.`
-        );
-        break;
-      } catch (error) {
-        console.log(`Attempt ${retries + 1} failed:`, error);
-        retries++;
-        if (retries === maxRetries) {
-          throw new Error("Failed to get response after maximum retries");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
-      }
-    }
-    const trimmedResponse = response.match(/```json\n(.*?)```/s)[1];
-    console.log(trimmedResponse);
-    const completeItineraries = JSON.parse(trimmedResponse);
-    const completeItinerariesWithImages = await getImages(completeItineraries);
-    const itinerariesWithImages = completeItinerariesWithImages.itineraries;
-    console.log(itinerariesWithImages);
-    const daysCount = itinerariesWithImages.length;
+    // while (retries < maxRetries) {
+    //   try {
+    //     response = await PplxAi.pplxRequestItineraries(
+    //       `${userChat}. Please create the detail itineraries for ${city},${country}.`
+    //     );
+    //     break;
+    //   } catch (error) {
+    //     console.log(`Attempt ${retries + 1} failed:`, error);
+    //     retries++;
+    //     if (retries === maxRetries) {
+    //       throw new Error("Failed to get response after maximum retries");
+    //     }
+    //     await new Promise((resolve) => setTimeout(resolve, 1000 * retries)); // Exponential backoff
+    //   }
+    // }
+    // const trimmedResponse = response.match(/```json\n(.*?)```/s)[1];
+    // console.log(trimmedResponse);
+    // const completeItineraries = JSON.parse(trimmedResponse);
+    // const completeItinerariesWithImages = await getImages(completeItineraries);
+    // const itinerariesWithImages = completeItinerariesWithImages.itineraries;
+    // console.log(itinerariesWithImages);
+    // const daysCount = itinerariesWithImages.length;
 
-    //for each location, get the coordinate
-    const itinerariesFixedLocation = await Promise.all(
-      itinerariesWithImages.map(async (itinerary) => ({
-        ...itinerary,
-        locations: await Promise.all(
-          itinerary.locations.map(async (location) => ({
-            ...location,
-            coordinates: await scrapeCoordinate(location.name, city, country),
-          }))
-        ),
-      }))
-    );
-
+    // //for each location, get the coordinate
+    // const itinerariesFixedLocation = await Promise.all(
+    //   itinerariesWithImages.map(async (itinerary) => ({
+    //     ...itinerary,
+    //     locations: await Promise.all(
+    //       itinerary.locations.map(async (location) => ({
+    //         ...location,
+    //         coordinates: await scrapeCoordinate(location.name, city, country),
+    //       }))
+    //     ),
+    //   }))
+    // );
+    const daysCount = 1;
+    const itinerariesFixedLocation = [
+      {
+        day: "Day 1",
+        locations: [
+          {
+            slug: "ubud-palace",
+            name: "Ubud Palace",
+            image:
+              "https://upload.wikimedia.org/wikipedia/commons/d/d8/Ubud_Palace_%282022%29.jpg",
+            category: "Architectural Buildings",
+            coordinates: [-8.5065977, 115.2625884],
+          },
+        ],
+      },
+    ];
     //update recommendation with itineraries
     await collection.updateOne(
       { _id: new ObjectId(recommendationId) },
@@ -243,7 +270,19 @@ export class Recommendation {
 
   static async getRecommendationDetails(id) {
     const collection = this.getCollection();
+    if (!id) {
+      throw {
+        message: "Recommendation ID is required",
+        code: "BAD_REQUEST",
+      };
+    }
     const response = await collection.findOne({ _id: new ObjectId(id) });
+    if (!response) {
+      throw {
+        message: "Recommendation not found",
+        code: "NOT_FOUND",
+      };
+    }
     return response;
   }
 

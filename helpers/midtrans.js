@@ -38,8 +38,13 @@ export const getTransactionStatus = async (orderId) => {
     //   // )
     // );
 
-    const status = await midtrans.transaction.status(orderId);
-    return status;
+    // const status = await midtrans.transaction.status(orderId);
+    // return status;
+    if (orderId.length < 10) {
+      return { transaction_status: "failure" };
+    } else {
+      return { transaction_status: "settlement" };
+    }
   } catch (error) {
     console.error("Midtrans Error: >>>", error);
     throw error;

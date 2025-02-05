@@ -68,13 +68,8 @@ const recommendationTypeDefs = `#graphql
 const recommendationResolvers = {
   Query: {
     getGeneralRecommendations: async () => {
-      try {
-        const response = await Recommendation.getGeneralRecommendations();
-        return response;
-      } catch (error) {
-        console.log("🚀 ~ getGeneralRecommendations: ~ error:", error);
-        errorHandler(error);
-      }
+      const response = await Recommendation.getGeneralRecommendations();
+      return response;
     },
     getGeneralRecommendationDetails: async (_, args) => {
       try {

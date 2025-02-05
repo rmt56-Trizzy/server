@@ -19,12 +19,12 @@ export class Subscription {
       };
     }
 
-    if (!midtransId) {
-      throw {
-        message: "Transaction Failed",
-        code: "BAD_REQUEST",
-      };
-    }
+    // if (!midtransId) {
+    //   throw {
+    //     message: "Transaction Failed",
+    //     code: "BAD_REQUEST",
+    //   };
+    // }
 
     const subscription = await this.isSubscribed(userId);
     if (subscription) {

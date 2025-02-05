@@ -34,7 +34,6 @@ const userTypeDefs = `#graphql
     }
 
     type Query {
-        hello: String
         getUserById(_id: ID!): User
     }
 
@@ -42,14 +41,6 @@ const userTypeDefs = `#graphql
 
 const userResolvers = {
   Query: {
-    hello: async () => {
-      try {
-        return "Hello World";
-      } catch (error) {
-        console.log("🚀 ~ getUser: ~ error:", error);
-        errorHandler(error);
-      }
-    },
     getUserById: async function (_, args) {
       try {
         const { _id } = args;

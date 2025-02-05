@@ -1,173 +1,333 @@
-// import { ObjectId } from "mongodb";
-// import { expect, it, describe } from "@jest/globals";
-// import { Subscription } from "../models/Subscription.js";
-// import { jest } from "@jest/globals";
-// import mockdate from "mockdate";
+import { getDB } from "../config/mongodb.js";
+import {
+  expect,
+  it,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  jest,
+} from "@jest/globals";
+import { User } from "../models/User.js";
+import { Chat } from "../models/Chat.js";
+import { Subscription } from "../models/Subscription.js";
+import { hashPassword, comparePasssword } from "../helpers/bcryptjs.js";
+import { signToken } from "../helpers/jwt.js";
+import { ObjectId } from "mongodb";
+import bcrypt from "bcryptjs";
+import request from "supertest"; // For making HTTP requests
+import { app, startServer } from "../app.js"; // Import your Express app
+import { OAuth2Client } from "google-auth-library";
+import { userTypeDefs, userResolvers } from "../schemas/userSchema.js";
+import { chatTypeDefs, chatResolvers } from "../schemas/chatSchema.js";
+import {
+  subscriptionTypeDefs,
+  subscriptionResolvers,
+} from "../schemas/subscriptionSchema.js";
+import {
+  createTransaction,
+  getTransactionStatus,
+} from "../helpers/midtrans.js";
+import e from "express";
 
-// // Create mock collection first
-// const mockCollection = {
-//   insertOne: jest.fn(),
-//   findOne: jest.fn(),
-//   updateOne: jest.fn(),
-// };
+describe("Subscription Class Integration Tests", () => {
+  let db;
+  let userCollection;
+  let chatCollection;
+  let subscriptionCollection;
+  let httpServer;
+  let userId;
+  let chatId;
+  let access_token;
+  let input;
+  let response;
+  let midtransId;
+  let subscriptionId;
+  let price = 189000;
 
-// // Mock the mongodb config module with guaranteed collection return
-// jest.mock("../config/mongodb.js", () => ({
-//   getDB: jest.fn().mockReturnValue({
-//     collection: jest.fn().mockReturnValue(mockCollection),
-//   }),
-// }));
+  beforeAll(async () => {
+    // Connect to the real MongoDB database
+    process.env.PORT = 3007;
+    httpServer = await startServer();
+    db = getDB();
+    chatCollection = db.collection("Chats");
+    userCollection = db.collection("Users");
+    subscriptionCollection = db.collection("Subscriptions");
 
-// beforeEach(() => {
-//   // Reset all mocks before each test
-//   jest.clearAllMocks();
-//   mockdate.reset();
+    //try register user
+    input = {
+      fullName: "Test User",
+      email: "test@example.com",
+      password: "password123",
+    };
 
-//   // Ensure collection mock is fresh
-//   mockCollection.insertOne.mockReset();
-//   mockCollection.findOne.mockReset();
-//   mockCollection.updateOne.mockReset();
-// });
-// describe("Subscription Class", () => {
-//   describe("addSubscription", () => {
-//     it("should throw an error if userId is missing", async () => {
-//       const payload = { midtransId: "123", price: 100 };
-//       await expect(Subscription.addSubscription(payload)).rejects.toThrow(
-//         "You must be logged in"
-//       );
-//     });
+    response = await userResolvers.Mutation.register(null, {
+      input,
+    });
 
-//     it("should throw an error if midtransId is missing", async () => {
-//       const payload = { userId: new ObjectId().toString(), price: 100 };
-//       await expect(Subscription.addSubscription(payload)).rejects.toThrow(
-//         "Transaction Failed"
-//       );
-//     });
+    response = await userResolvers.Mutation.login(null, {
+      login: {
+        email: input.email,
+        password: input.password,
+      },
+    });
+    userId = response.userId;
+    access_token = response.access_token;
+  });
 
-//     it("should add a subscription if payload is valid", async () => {
-//       const payload = {
-//         userId: new ObjectId().toString(),
-//         midtransId: "123",
-//         price: 100,
-//       };
+  afterAll(async () => {
+    // Cleanup: Remove test data
+    await chatCollection.deleteMany({});
+    await userCollection.deleteMany({});
+    await subscriptionCollection.deleteMany({});
+    if (httpServer) {
+      await new Promise((resolve) => httpServer.close(resolve));
+      console.log("🛑 Test Server stopped");
+    }
+  });
 
-//       mockCollection.findOne.mockResolvedValue(null); // ✅ No existing subscription
+  describe("Add Subscription", () => {
+    it("should create a new subscription", async () => {
+      const payload = {
+        midtransId: "SUB-67a3402657623c8b4a1954e3-1738760714467",
+        price: price,
+      };
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      const result = await subscriptionResolvers.Mutation.addSubscription(
+        null,
+        {
+          payload,
+        },
+        context
+      );
+      expect(typeof result).toBe("string");
+      expect(result.length).toBeGreaterThanOrEqual(20);
+    });
 
-//       const result = await Subscription.addSubscription(payload);
+    it("should throw an error if user is not logged in", async () => {
+      const payload = {
+        midtransId: "SUB-67a3402657623c8b4a1954e3-1738760714467",
+        price: price,
+      };
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: null }),
+      };
+      try {
+        await subscriptionResolvers.Mutation.addSubscription(
+          null,
+          { payload },
+          context
+        );
+      } catch (error) {
+        expect(error.message).toBe("You must be logged in");
+        expect(error.extensions.code).toBe("UNAUTHORIZED");
+      }
+    });
 
-//       expect(result).toBe("Subscription added successfully");
-//       expect(mockCollection.insertOne).toHaveBeenCalledWith(
-//         expect.objectContaining({
-//           userId: payload.userId,
-//           midtransId: payload.midtransId,
-//           price: payload.price,
-//           status: "pending",
-//         })
-//       );
-//     });
+    it("should throw an error if subscription is invalid", async () => {
+      const payload = {
+        midtransId: "",
+        price: price,
+      };
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      try {
+        await subscriptionResolvers.Mutation.addSubscription(
+          null,
+          { payload },
+          context
+        );
+      } catch (error) {
+        expect(error.message).toBe("Transaction Failed");
+        expect(error.extensions.code).toBe("BAD_REQUEST");
+      }
+    });
 
-//     it("should throw an error if user is already subscribed", async () => {
-//       const payload = {
-//         userId: new ObjectId().toString(),
-//         midtransId: "123",
-//         price: 100,
-//       };
+    it("should throw an error if subscription already exists", async () => {
+      const payload = {
+        midtransId: "SUB-67a3402657623c8b4a1954e3-1738760714467",
+        price: price,
+      };
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      try {
+        await subscriptionResolvers.Mutation.addSubscription(
+          null,
+          { payload },
+          context
+        );
+      } catch (error) {
+        expect(error.message).toBe("You are already subscribed");
+        expect(error.extensions.code).toBe("BAD_REQUEST");
+      }
+    });
+  });
 
-//       mockCollection.findOne.mockResolvedValue({ status: "paid" }); // ✅ Existing subscription
+  describe("Get Subscription", () => {
+    it("should throw an error if user is not logged in", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: null }),
+      };
+      try {
+        await subscriptionResolvers.Query.getSubscription(null, null, context);
+      } catch (error) {
+        expect(error.message).toBe("You must be logged in");
+        expect(error.extensions.code).toBe("UNAUTHORIZED");
+      }
+    });
 
-//       await expect(Subscription.addSubscription(payload)).rejects.toThrow(
-//         "You are already subscribed"
-//       );
-//     });
-//   });
+    it("should throw an error if subscription is not found", async () => {
+      const context = {
+        authentication: jest
+          .fn()
+          .mockResolvedValue({ _id: "67a2e47057623c8b4a1954d7" }),
+      };
+      try {
+        await subscriptionResolvers.Query.getSubscription(null, null, context);
+      } catch (error) {
+        expect(error.message).toBe("Subscription not found");
+        expect(error.extensions.code).toBe("NOT_FOUND");
+      }
+    });
 
-//   describe("getSubscription", () => {
-//     it("should throw an error if userId is missing", async () => {
-//       await expect(Subscription.getSubscription()).rejects.toThrow(
-//         "You must be logged in"
-//       );
-//     });
+    it("should get the subscription", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      const result = await subscriptionResolvers.Query.getSubscription(
+        null,
+        null,
+        context
+      );
+      //   console.log(result);
+      expect(result).toHaveProperty("userId");
+      expect(result).toHaveProperty("status");
+      expect(result).toHaveProperty("midtransId");
+      expect(result).toHaveProperty("_id");
+      midtransId = result.midtransId;
+      subscriptionId = result._id;
+    });
+  });
 
-//     it("should return the latest subscription for a user", async () => {
-//       const userId = new ObjectId().toString();
-//       const mockSubscription = {
-//         userId: new ObjectId(userId),
-//         midtransId: "123",
-//         price: 100,
-//         status: "paid",
-//       };
+  describe("Check Subscription", () => {
+    it("should throw an error if user is not logged in", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: null }),
+      };
+      try {
+        await subscriptionResolvers.Query.isSubscribed(null, null, context);
+      } catch (error) {
+        expect(error.message).toBe("You must be logged in");
+        expect(error.extensions.code).toBe("UNAUTHORIZED");
+      }
+    });
 
-//       mockCollection.findOne.mockResolvedValue(mockSubscription);
+    it("should check if user is subscribed", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      const result = await subscriptionResolvers.Query.isSubscribed(
+        null,
+        null,
+        context
+      );
+      expect(result).toBe(true);
+    });
+  });
 
-//       const result = await Subscription.getSubscription(userId);
-//       expect(result).toEqual(mockSubscription);
-//       expect(mockCollection.findOne).toHaveBeenCalledWith(
-//         { userId: new ObjectId(userId) },
-//         { sort: { transactionTime: -1 } }
-//       );
-//     });
-//   });
+  describe("Payment failed", () => {
+    //the endDate has passed
+    it("should return expired", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      await subscriptionCollection.updateOne(
+        {
+          _id: subscriptionId,
+        },
+        {
+          $set: {
+            endDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30),
+          },
+        }
+      );
+      const result = await subscriptionResolvers.Query.isSubscribed(
+        null,
+        null,
+        context
+      );
+      expect(result).toBe(false);
+    });
 
-//   describe("isSubscribed", () => {
-//     it("should return false if no subscription exists", async () => {
-//       const userId = new ObjectId().toString();
-//       mockCollection.findOne.mockResolvedValue(null);
-
-//       const result = await Subscription.isSubscribed(userId);
-//       expect(result).toBe(false);
-//     });
-
-//     it("should return true if subscription is active", async () => {
-//       const userId = new ObjectId().toString();
-//       const mockSubscription = {
-//         userId: new ObjectId(userId),
-//         midtransId: "123",
-//         price: 100,
-//         status: "paid",
-//         startDate: new Date().toISOString().split("T")[0],
-//         endDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
-//           .toISOString()
-//           .split("T")[0],
-//       };
-
-//       mockCollection.findOne.mockResolvedValue(mockSubscription);
-
-//       const result = await Subscription.isSubscribed(userId);
-//       expect(result).toBe(true);
-//     });
-
-//     it("should return false if subscription is expired", async () => {
-//       const userId = new ObjectId().toString();
-//       const mockSubscription = {
-//         userId: new ObjectId(userId),
-//         midtransId: "123",
-//         price: 100,
-//         status: "paid",
-//         startDate: "2023-01-01",
-//         endDate: "2023-02-01",
-//       };
-
-//       // Mock the current date to be after the subscription end date
-//       mockdate.set("2023-03-01");
-
-//       mockCollection.findOne.mockResolvedValue(mockSubscription);
-
-//       const result = await Subscription.isSubscribed(userId);
-//       expect(result).toBe(false);
-//     });
-//   });
-
-//   describe("updateSubscriptionStatus", () => {
-//     it("should update the subscription status", async () => {
-//       const midtransId = "123";
-//       const newStatus = "paid";
-
-//       await Subscription.updateSubscriptionStatus(midtransId, newStatus);
-
-//       expect(mockCollection.updateOne).toHaveBeenCalledWith(
-//         { midtransId },
-//         { $set: { status: newStatus } }
-//       );
-//     });
-//   });
-// });
+    it("should return payment failed", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      await subscriptionCollection.updateOne(
+        { _id: subscriptionId },
+        {
+          $set: {
+            status: "pending",
+            midtransId: "SUB-67a",
+          },
+        }
+      );
+      const result = await subscriptionResolvers.Query.getSubscription(
+        null,
+        null,
+        context
+      );
+      expect(result).toHaveProperty("status");
+      expect(result).toHaveProperty("midtransId");
+      expect(result).toHaveProperty("_id");
+      expect(result.status).toBe("paymentFailed");
+    });
+    it("should return payment failed", async () => {
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      await subscriptionCollection.updateOne(
+        { _id: subscriptionId },
+        {
+          $set: {
+            status: "pending",
+            midtransId: null,
+          },
+        }
+      );
+      try {
+        const result = await subscriptionResolvers.Query.getSubscription(
+          null,
+          null,
+          context
+        );
+      } catch (error) {
+        expect(error.extensions.code).toBe("INTERNAL_SERVER_ERROR");
+      }
+    });
+    it("should failed creating transaction", async () => {
+      const payload = {
+        midtransId: "SUB-67a3402657623c8b4a1954e3-1738760714467",
+        price: null,
+      };
+      const context = {
+        authentication: jest.fn().mockResolvedValue({ _id: userId }),
+      };
+      try {
+        const result = await subscriptionResolvers.Mutation.addSubscription(
+          null,
+          {
+            payload,
+          },
+          context
+        );
+      } catch (error) {
+        expect(error.extensions.code).toBe("INTERNAL_SERVER_ERROR");
+      }
+    });
+  });
+});
