@@ -1,173 +1,356 @@
-// import { ObjectId } from "mongodb";
-// import { expect, it, describe } from "@jest/globals";
-// import { Subscription } from "../models/Subscription.js";
-// import { jest } from "@jest/globals";
-// import mockdate from "mockdate";
+import {
+  expect,
+  it,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} from "@jest/globals";
+import { getDB } from "../config/mongodb"; // Use actual DB configuration
+import { Subscription } from "../models/Subscription";
+import request from "supertest"; // For making HTTP requests
+import { app, startServer } from "../app"; // Import your Express app
+import { hashPassword } from "../helpers/bcryptjs";
+import { ObjectId } from "mongodb";
 
-// // Create mock collection first
-// const mockCollection = {
-//   insertOne: jest.fn(),
-//   findOne: jest.fn(),
-//   updateOne: jest.fn(),
-// };
+let db;
+let userCollection;
+let subscriptionCollection;
+let accessToken;
+let userId;
+let httpServer;
 
-// // Mock the mongodb config module with guaranteed collection return
-// jest.mock("../config/mongodb.js", () => ({
-//   getDB: jest.fn().mockReturnValue({
-//     collection: jest.fn().mockReturnValue(mockCollection),
-//   }),
-// }));
+const userData = {
+  fullName: "Test User 1",
+  email: "test1@mail.com",
+  password: "123456",
+};
 
-// beforeEach(() => {
-//   // Reset all mocks before each test
-//   jest.clearAllMocks();
-//   mockdate.reset();
+const price = 10000;
+const midtransBaseUrl = "https://app.sandbox.midtrans.com";
 
-//   // Ensure collection mock is fresh
-//   mockCollection.insertOne.mockReset();
-//   mockCollection.findOne.mockReset();
-//   mockCollection.updateOne.mockReset();
-// });
-// describe("Subscription Class", () => {
-//   describe("addSubscription", () => {
-//     it("should throw an error if userId is missing", async () => {
-//       const payload = { midtransId: "123", price: 100 };
-//       await expect(Subscription.addSubscription(payload)).rejects.toThrow(
-//         "You must be logged in"
-//       );
-//     });
+describe("Subscription Model Tests", () => {
+  beforeAll(async () => {
+    // Start Server
+    httpServer = await startServer();
+    // server = app.listen(4000, () =>
+    //   console.log("🚀 Test Server running on port 4000")
+    // );
 
-//     it("should throw an error if midtransId is missing", async () => {
-//       const payload = { userId: new ObjectId().toString(), price: 100 };
-//       await expect(Subscription.addSubscription(payload)).rejects.toThrow(
-//         "Transaction Failed"
-//       );
-//     });
+    // ✅ Get actual DB instance
+    db = getDB();
+    userCollection = db.collection("Users");
+    subscriptionCollection = db.collection("Subscriptions");
 
-//     it("should add a subscription if payload is valid", async () => {
-//       const payload = {
-//         userId: new ObjectId().toString(),
-//         midtransId: "123",
-//         price: 100,
-//       };
+    // ✅ Clear collections before running tests
+    await userCollection.deleteMany({});
+    await subscriptionCollection.deleteMany({});
 
-//       mockCollection.findOne.mockResolvedValue(null); // ✅ No existing subscription
+    // ✅ Hash password before inserting the user
+    userData.password = await hashPassword(userData.password, 10);
+    const result = await userCollection.insertOne(userData);
+    userId = result.insertedId.toString(); // 🔹 Store generated user ID
 
-//       const result = await Subscription.addSubscription(payload);
+    // ✅ Perform login to get access token
+    const loginResponse = await request(app)
+      .post("/graphql") // ✅ Must be /graphql
+      .send({
+        query: `
+        mutation Login($login: LoginInput) {
+         login(login: $login) {
+            access_token
+            userId
+            }
+        }
+        `,
+        variables: {
+          login: {
+            email: userData.email,
+            password: "123456",
+          },
+        },
+      });
+    console.log("🚀 ~ loginResponse ~ loginResponse.body:", loginResponse.body);
 
-//       expect(result).toBe("Subscription added successfully");
-//       expect(mockCollection.insertOne).toHaveBeenCalledWith(
-//         expect.objectContaining({
-//           userId: payload.userId,
-//           midtransId: payload.midtransId,
-//           price: payload.price,
-//           status: "pending",
-//         })
-//       );
-//     });
+    accessToken = loginResponse.body.data?.login?.access_token;
 
-//     it("should throw an error if user is already subscribed", async () => {
-//       const payload = {
-//         userId: new ObjectId().toString(),
-//         midtransId: "123",
-//         price: 100,
-//       };
+    if (!accessToken) {
+      console.error("❌ Login failed. No access token received.");
+      throw new Error("Login failed - Access token is undefined");
+    }
+  });
 
-//       mockCollection.findOne.mockResolvedValue({ status: "paid" }); // ✅ Existing subscription
+  // afterAll(async () => {
+  //   // ✅ Cleanup: Remove test data
+  //   await userCollection.deleteMany({});
+  //   await subscriptionCollection.deleteMany({});
+  //   if (httpServer) {
+  //     await new Promise((resolve) => httpServer.close(resolve));
+  //     console.log("🛑 Test Server stopped");
+  //   }
+  // });
 
-//       await expect(Subscription.addSubscription(payload)).rejects.toThrow(
-//         "You are already subscribed"
-//       );
-//     });
-//   });
+  describe("Sanbox Tests", () => {
+    it("sandbox testing", async () => {
+      expect(1).toBe(1);
+    });
+  });
 
-//   describe("getSubscription", () => {
-//     it("should throw an error if userId is missing", async () => {
-//       await expect(Subscription.getSubscription()).rejects.toThrow(
-//         "You must be logged in"
-//       );
-//     });
+  describe("addSubscription", () => {
+    it("should allow a logged-in user to add a subscription", async () => {
+      const response = await request(app)
+        .post("/graphql")
+        .set("Authorization", `Bearer ${accessToken}`)
+        .send({
+          query: `
+            mutation AddSubscription($payload: SubscriptionInput) {
+            addSubscription(payload: $payload)
+            }
+          `,
+          variables: {
+            payload: {
+              midtransId: "SUB-123",
+              price,
+            },
+          },
+        });
+      console.log("🚀 ~ it ~ response:", response.body);
 
-//     it("should return the latest subscription for a user", async () => {
-//       const userId = new ObjectId().toString();
-//       const mockSubscription = {
-//         userId: new ObjectId(userId),
-//         midtransId: "123",
-//         price: 100,
-//         status: "paid",
-//       };
+      // ✅ Ensure request was successful
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
 
-//       mockCollection.findOne.mockResolvedValue(mockSubscription);
+      // response: { data: { addSubscription: 'f95dc5ee-c61d-4e6f-965a-4c41292e6519' } }
+      // expect(response.body.data.addSubscription).toBeDefined();
+      expect(typeof response.body.data.addSubscription).toBe("string");
+      expect(typeof response.body.data.addSubscription).toBe("string");
 
-//       const result = await Subscription.getSubscription(userId);
-//       expect(result).toEqual(mockSubscription);
-//       expect(mockCollection.findOne).toHaveBeenCalledWith(
-//         { userId: new ObjectId(userId) },
-//         { sort: { transactionTime: -1 } }
-//       );
-//     });
-//   });
+      //   console.log("Midtrans ID:>>>>", global.midtransId); // Debugging log
 
-//   describe("isSubscribed", () => {
-//     it("should return false if no subscription exists", async () => {
-//       const userId = new ObjectId().toString();
-//       mockCollection.findOne.mockResolvedValue(null);
+      // ✅ Fetch the inserted subscription from the database
+      const insertedSubscription = await subscriptionCollection.findOne({
+        userId: new ObjectId(userId),
+      });
 
-//       const result = await Subscription.isSubscribed(userId);
-//       expect(result).toBe(false);
-//     });
+      console.log("🚀 Inserted Subscription:", insertedSubscription); // Debugging log
 
-//     it("should return true if subscription is active", async () => {
-//       const userId = new ObjectId().toString();
-//       const mockSubscription = {
-//         userId: new ObjectId(userId),
-//         midtransId: "123",
-//         price: 100,
-//         status: "paid",
-//         startDate: new Date().toISOString().split("T")[0],
-//         endDate: new Date(new Date().setMonth(new Date().getMonth() + 1))
-//           .toISOString()
-//           .split("T")[0],
-//       };
+      // ✅ Validate that the subscription exists and has status "pending"
+      expect(insertedSubscription).toBeDefined();
+      expect(insertedSubscription.status).toBe("pending");
+      expect(insertedSubscription.price).toBe(price);
+      const todayDate = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-//       mockCollection.findOne.mockResolvedValue(mockSubscription);
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1); // Moves to the same day next month
+      const nextMonthDate = nextMonth.toISOString().split("T")[0]; // Extract YYYY-MM-DD
 
-//       const result = await Subscription.isSubscribed(userId);
-//       expect(result).toBe(true);
-//     });
+      expect(insertedSubscription.startDate).toBe(todayDate);
+      expect(insertedSubscription.endDate).toBe(nextMonthDate);
+    });
+  });
 
-//     it("should return false if subscription is expired", async () => {
-//       const userId = new ObjectId().toString();
-//       const mockSubscription = {
-//         userId: new ObjectId(userId),
-//         midtransId: "123",
-//         price: 100,
-//         status: "paid",
-//         startDate: "2023-01-01",
-//         endDate: "2023-02-01",
-//       };
+  // describe("🔹 **Failing Subscription Scenarios**", () => {
+  //   it("❌ Should **fail** if the user is not logged in", async () => {
+  //     const response = await request(app)
+  //       .post("/graphql")
+  //       .send({
+  //         query: `
+  //           mutation AddSubscription($payload: SubscriptionInput) {
+  //             addSubscription(payload: $payload)
+  //           }
+  //         `,
+  //         variables: {
+  //           payload: {
+  //             midtransId: "SUB-FAKE",
+  //             price,
+  //           },
+  //         },
+  //       });
 
-//       // Mock the current date to be after the subscription end date
-//       mockdate.set("2023-03-01");
+  //     expect(response.status).toBe(401);
+  //     expect(response.body.errors).toBeDefined();
+  //     expect(response.body.errors[0].message).toBe("You must be logged in");
+  //   });
 
-//       mockCollection.findOne.mockResolvedValue(mockSubscription);
+  //   it("❌ Should **fail** if midtransId is missing", async () => {
+  //     const response = await request(app)
+  //       .post("/graphql")
+  //       .set("Authorization", `Bearer ${accessToken}`)
+  //       .send({
+  //         query: `
+  //           mutation AddSubscription($payload: SubscriptionInput) {
+  //             addSubscription(payload: $payload)
+  //           }
+  //         `,
+  //         variables: {
+  //           payload: {
+  //             price,
+  //           },
+  //         },
+  //       });
 
-//       const result = await Subscription.isSubscribed(userId);
-//       expect(result).toBe(false);
-//     });
-//   });
+  //     expect(response.status).toBe(200);
+  //     expect(response.body.errors).toBeDefined();
+  //     expect(response.body.errors[0].message).toContain(
+  //       'Field "midtransId" of required type "String!" was not provided'
+  //     );
+  //   });
 
-//   describe("updateSubscriptionStatus", () => {
-//     it("should update the subscription status", async () => {
-//       const midtransId = "123";
-//       const newStatus = "paid";
+  //   it("❌ Should **fail** if price is missing", async () => {
+  //     const response = await request(app)
+  //       .post("/graphql")
+  //       .set("Authorization", `Bearer ${accessToken}`)
+  //       .send({
+  //         query: `
+  //           mutation AddSubscription($payload: SubscriptionInput) {
+  //             addSubscription(payload: $payload)
+  //           }
+  //         `,
+  //         variables: {
+  //           payload: {
+  //             midtransId: "SUB-FAKE",
+  //           },
+  //         },
+  //       });
 
-//       await Subscription.updateSubscriptionStatus(midtransId, newStatus);
+  //     expect(response.status).toBe(200);
+  //     expect(response.body.errors).toBeDefined();
+  //     expect(response.body.errors[0].message).toContain(
+  //       'Field "price" of required type "Int!" was not provided'
+  //     );
+  //   });
 
-//       expect(mockCollection.updateOne).toHaveBeenCalledWith(
-//         { midtransId },
-//         { $set: { status: newStatus } }
-//       );
-//     });
-//   });
-// });
+  //   it("should fail if user is already subscribed", async () => {
+  //     const midtransId = new ObjectId().toHexString();
+
+  //     // ✅ First Subscription
+  //     await request(app)
+  //       .post("/graphql")
+  //       .set("Authorization", `Bearer ${accessToken}`)
+  //       .send({
+  //         query: `
+  //           mutation AddSubscription($payload: SubscriptionInput) {
+  //             addSubscription(payload: $payload)
+  //           }
+  //         `,
+  //         variables: {
+  //           payload: {
+  //             midtransId,
+  //             price,
+  //           },
+  //         },
+  //       });
+
+  //     // ✅ Second Subscription Attempt
+  //     const response = await request(app)
+  //       .post("/graphql")
+  //       .set("Authorization", `Bearer ${accessToken}`)
+  //       .send({
+  //         query: `
+  //           mutation AddSubscription($payload: SubscriptionInput) {
+  //             addSubscription(payload: $payload)
+  //           }
+  //         `,
+  //         variables: {
+  //           payload: {
+  //             midtransId,
+  //             price,
+  //           },
+  //         },
+  //       });
+
+  //     console.log("🚀 ~ Duplicate Subscription Response:", response.body);
+  //     expect(response.status).toBe(200);
+  //     expect(response.body.errors).toBeDefined();
+  //     expect(response.body.errors[0].message).toBe(
+  //       "You are already subscribed"
+  //     );
+  //   });
+
+  //   // it("❌ Should **fail** if subscription status is `paymentFailed`", async () => {
+  //   //   await subscriptionCollection.insertOne({
+  //   //     userId: new ObjectId(userId),
+  //   //     midtransId: "SUB-FAILED-PAYMENT",
+  //   //     price,
+  //   //     startDate: new Date().toISOString().split("T")[0],
+  //   //     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  //   //       .toISOString()
+  //   //       .split("T")[0],
+  //   //     status: "paymentFailed",
+  //   //   });
+
+  //   //   const response = await request(app)
+  //   //     .post("/graphql")
+  //   //     .set("Authorization", `Bearer ${accessToken}`)
+  //   //     .send({
+  //   //       query: `
+  //   //         mutation AddSubscription($payload: SubscriptionInput) {
+  //   //           addSubscription(payload: $payload)
+  //   //         }
+  //   //       `,
+  //   //       variables: {
+  //   //         payload: {
+  //   //           midtransId: "SUB-NEW-AFTER-FAILED",
+  //   //           price,
+  //   //         },
+  //   //       },
+  //   //     });
+
+  //   //   expect(response.status).toBe(200);
+  //   //   expect(response.body.errors).toBeDefined();
+  //   //   expect(response.body.errors[0].message).toBe(
+  //   //     "You are already subscribed"
+  //   //   );
+  //   // });
+
+  //   // it("❌ Should **fail** if price is negative", async () => {
+  //   //   const response = await request(app)
+  //   //     .post("/graphql")
+  //   //     .set("Authorization", `Bearer ${accessToken}`)
+  //   //     .send({
+  //   //       query: `
+  //   //         mutation AddSubscription($payload: SubscriptionInput) {
+  //   //           addSubscription(payload: $payload)
+  //   //         }
+  //   //       `,
+  //   //       variables: {
+  //   //         payload: {
+  //   //           midtransId: "SUB-NEGATIVE",
+  //   //           price: -1000,
+  //   //         },
+  //   //       },
+  //   //     });
+
+  //   //   expect(response.status).toBe(200);
+  //   //   expect(response.body.errors).toBeDefined();
+  //   //   expect(response.body.errors[0].message).toBe(
+  //   //     "Price must be a positive integer"
+  //   //   );
+  //   // });
+
+  //   // it("❌ Should **fail** if midtransId is too long", async () => {
+  //   //   const longMidtransId = "SUB-".padEnd(100, "X");
+
+  //   //   const response = await request(app)
+  //   //     .post("/graphql")
+  //   //     .set("Authorization", `Bearer ${accessToken}`)
+  //   //     .send({
+  //   //       query: `
+  //   //         mutation AddSubscription($payload: SubscriptionInput) {
+  //   //           addSubscription(payload: $payload)
+  //   //         }
+  //   //       `,
+  //   //       variables: {
+  //   //         payload: {
+  //   //           midtransId: longMidtransId,
+  //   //           price,
+  //   //         },
+  //   //       },
+  //   //     });
+
+  //   //   expect(response.status).toBe(200);
+  //   //   expect(response.body.errors).toBeDefined();
+  //   //   expect(response.body.errors[0].message).toContain("midtransId too long");
+  //   // });
+  // });
+});

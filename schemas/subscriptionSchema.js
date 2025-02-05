@@ -4,6 +4,7 @@ import {
   createTransaction,
   getTransactionStatus,
 } from "../helpers/midtrans.js";
+import { ObjectId } from "mongodb";
 
 const subscriptionTypeDefs = `#graphql
     type Subscription {
@@ -100,7 +101,9 @@ const subscriptionResolvers = {
         const { _id: userId } = await context.authentication();
 
         // Generate a unique order_id
-        const orderId = `SUB-${userId}-${Date.now()}`;
+        const orderId = `SUB-${userId}-${new ObjectId()
+          .toHexString()
+          .slice(-6)}`;
 
         payload.userId = userId;
 
