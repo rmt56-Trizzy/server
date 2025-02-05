@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --experimental-vm-modules ./node_modules/.bin/jest --verbose --detectOpenHandles --forceExit --runInBand  --coverage",
+    "test": "node --experimental-vm-modules ./node_modules/.bin/jest --verbose --detectOpenHandles --forceExit --runInBand  --coverage --silent=false",
     "dev": "nodemon --env-file=.env app.js",
     "start": "node app.js"
   },
@@ -32,5 +32,8 @@
     "nodemailer": "^6.10.0",
     "supertest": "^7.0.0",
     "uid": "^2.0.2"
+  },
+  "devDependencies": {
+    "nock": "^14.0.0"
   }
 }

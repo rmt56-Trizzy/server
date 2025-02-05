@@ -9,6 +9,7 @@ export class Subscription {
   }
 
   static async addSubscription(payload) {
+    console.log("🚀 ~ Subscription ~ addSubscription ~ payload:", payload);
     const { userId, midtransId, price } = payload;
     const collection = this.getCollection();
 
