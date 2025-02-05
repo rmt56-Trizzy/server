@@ -28,7 +28,7 @@ async function connect() {
         break;
     }
     // db = client.db("trizzy");
-    console.log("🚀 ~ connected to ~ db: trizzy");
+    console.log("🚀 ~ connected");
     return db;
   } catch (err) {
     console.log("🚀 ~ connect ~ err:", err);
