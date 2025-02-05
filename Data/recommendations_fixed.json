@@ -1,0 +1,739 @@
+[
+  {
+    "city": "Jakarta",
+    "country": "Indonesia",
+    "countryCode": "ID",
+    "itineraries": [
+      {
+        "day": "Day 1",
+        "locations": [
+          {
+            "slug": "monas",
+            "name": "National Monument (Monas)",
+            "category": "Architectural Buildings",
+            "coordinates": [-6.1753924, 106.8271528],
+            "image": "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Jakarta_Indonesia_National-Monument-02.jpg/1200px-Jakarta_Indonesia_National-Monument-02.jpg"
+          },
+          {
+            "slug": "national-museum-indonesia",
+            "name": "National Museum of Indonesia",
+            "category": "Museums",
+            "coordinates": [-6.1762, 106.8224],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Jakarta_Indonesia_National-Museum-01.jpg"
+          },
+          {
+            "slug": "jakarta-old-town",
+            "name": "Jakarta Old Town (Kota Tua)",
+            "category": "Historic Sites",
+            "coordinates": [-6.1367, 106.8134],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jakarta_Indonesia_Jakarta-History-Museum-01.jpg"
+          },
+          {
+            "slug": "fatahillah-museum",
+            "name": "Fatahillah Museum",
+            "category": "Museums",
+            "coordinates": [-6.1351, 106.8133],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/1/10/Jakarta_Indonesia_Jakarta-History-Museum-02.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 2",
+        "locations": [
+          {
+            "slug": "taman-mini-indonesia-indah",
+            "name": "Taman Mini Indonesia Indah (TMII)",
+            "category": "Theme Parks",
+            "coordinates": [-6.3024, 106.8951],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/TMII_Istana_Anak-anak_Indonesia.JPG/1200px-TMII_Istana_Anak-anak_Indonesia.JPG"
+          },
+          {
+            "slug": "ragunan-zoo",
+            "name": "Ragunan Zoo",
+            "category": "Zoos",
+            "coordinates": [-6.3069, 106.8219],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/17/81/8a/c2/status.jpg?w=900&h=500&s=1"
+          },
+          {
+            "slug": "ancol-dreamland",
+            "name": "Ancol Dreamland",
+            "category": "Amusement Parks",
+            "coordinates": [-6.1261, 106.8326],
+            "image": "https://www.ancol.com/blog/wp-content/uploads/2022/02/tempat-wisata-di-jakarta-hits-murah.jpg"
+          },
+          {
+            "slug": "glodok-chinatown-market",
+            "name": "Glodok Chinatown Market",
+            "category": "Markets",
+            "coordinates": [-6.1437, 106.8156],
+            "image": "https://storage.jakarta-tourism.go.id/public/articles/6e1e1472-adf4-479c-be63-b5109266f9b4.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 3",
+        "locations": [
+          {
+            "slug": "grand-indonesia-mall",
+            "name": "Grand Indonesia Mall",
+            "category": "Shopping Malls",
+            "coordinates": [-6.1951, 106.8209],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Grand_Indonesia_Mall.jpg"
+          },
+          {
+            "slug": "jakarta-art-district",
+            "name": "Jakarta Art District",
+            "category": "Art Galleries",
+            "coordinates": [-6.2088, 106.8222],
+            "image": "https://indoartnow.com/uploads/exhibition/image/276/exhibition-1398928266.jpg"
+          },
+          {
+            "slug": "istiqlal-mosque",
+            "name": "Istiqlal Mosque",
+            "category": "Religious Sites",
+            "coordinates": [-6.1701, 106.8308],
+            "image": "https://upload.wikimedia.org/wikipedia/id/2/25/Masjid_Istiqlal_-_Panoramio.jpg"
+          },
+          {
+            "slug": "jakarta-cathedral",
+            "name": "Jakarta Cathedral",
+            "category": "Religious Sites",
+            "coordinates": [-6.1697, 106.8336],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Katedral_Jakarta.jpg/1200px-Katedral_Jakarta.jpg"
+          }
+        ]
+      }
+    ],
+    "cityImage": "https://www.agoda.com/wp-content/uploads/2024/02/Jakarta-Kota-Tua-Jakarta-old-town-1050x700.jpg"
+  },
+  {
+    "city": "Seoul",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "itineraries": [
+      {
+        "day": "Day 1",
+        "locations": [
+          {
+            "slug": "gyeongbokgung-palace",
+            "name": "Gyeongbokgung Palace",
+            "category": "Historic Sites",
+            "coordinates": [37.5796, 126.977],
+            "image": "https://ucarecdn.com/2667d034-3197-4c39-b162-579a4e2e583a/-/crop/1920x1007/0,72/-/resize/1200x630/-/resize/x300/"
+          },
+          {
+            "slug": "national-folk-museum",
+            "name": "National Folk Museum of Korea",
+            "category": "Museums",
+            "coordinates": [37.5816, 126.9775],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/da/Korea-Seoul-National.folk.museum-01.JPG"
+          },
+          {
+            "slug": "bukchon-hanok-village",
+            "name": "Bukchon Hanok Village",
+            "category": "Historic Sites",
+            "coordinates": [37.5824, 126.986],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Bukchon_Hanok_Village_01.jpg"
+          },
+          {
+            "slug": "insadong",
+            "name": "Insadong",
+            "category": "Shopping Districts",
+            "coordinates": [37.574, 126.9851],
+            "image": "https://a.travel-assets.com/findyours-php/viewfinder/images/res70/249000/249996-Insadong.jpg"
+          },
+          {
+            "slug": "cheese-industry",
+            "name": "Cheese Industry",
+            "category": "Cafe",
+            "coordinates": [37.5758, 126.9856],
+            "image": "https://middleclass.sg/wp-content/uploads/2023/05/Cheese-Industry-Cover-Photo.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 2",
+        "locations": [
+          {
+            "slug": "namsan-park",
+            "name": "Namsan Park",
+            "category": "Parks",
+            "coordinates": [37.5512, 126.9882],
+            "image": "https://www.agoda.com/wp-content/uploads/2019/03/N-Seoul-Tower-Seoul-Namsan-Park.jpg"
+          },
+          {
+            "slug": "n-seoul-tower",
+            "name": "N Seoul Tower",
+            "category": "Observation Decks & Towers",
+            "coordinates": [37.5511, 126.9882],
+            "image": "https://ik.imagekit.io/tvlk/blog/2023/10/shutterstock_2345265717.jpg"
+          },
+          {
+            "slug": "myeongdong-kyoja",
+            "name": "Myeongdong Kyoja",
+            "category": "Restaurant",
+            "coordinates": [37.5634, 126.985],
+            "image": "https://media-cdn.tripadvisor.com/media/photo-s/0c/e2/f5/28/20160825-180906-largejpg.jpg"
+          },
+          {
+            "slug": "myeongdong",
+            "name": "Myeongdong",
+            "category": "Shopping Districts",
+            "coordinates": [37.5635, 126.985],
+            "image": "https://www.agoda.com/wp-content/uploads/2019/01/Myeongdong-Seoul-shopping-district.jpg"
+          },
+          {
+            "slug": "cheonggyecheon-stream",
+            "name": "Cheonggyecheon Stream",
+            "category": "Points of Interest",
+            "coordinates": [37.5696, 126.9784],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/05/e6/33/ce/cheonggyecheon.jpg?w=1200&h=1200&s=1"
+          },
+          {
+            "slug": "stylenanda-pink-pool-cafe",
+            "name": "Stylenanda Pink Pool Cafe",
+            "category": "Cafe",
+            "coordinates": [37.5619, 126.9852],
+            "image": "https://www.koreaetour.com/wp-content/uploads/2019/05/Pink-Pool-Cafe.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 3",
+        "locations": [
+          {
+            "slug": "jongmyo-shrine",
+            "name": "Jongmyo Shrine",
+            "category": "Historic Sites",
+            "coordinates": [37.5746, 126.9946],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Jeongjeon%2C_Jongmyo_%28Autumn%2C_2012%29.jpg"
+          },
+          {
+            "slug": "changdeokgung-palace",
+            "name": "Changdeokgung Palace",
+            "category": "Historic Sites",
+            "coordinates": [37.5792, 126.9911],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/16/19/5e/41/entrance.jpg?w=900&h=500&s=1"
+          },
+          {
+            "slug": "hongdae",
+            "name": "Hongdae",
+            "category": "Neighborhoods",
+            "coordinates": [37.5565, 126.924],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/db/Street_hongdae_Seoul.jpg"
+          },
+          {
+            "slug": "trick-eye-museum",
+            "name": "Trick Eye Museum",
+            "category": "Museums",
+            "coordinates": [37.5542, 126.9226],
+            "image": "https://trickeye.com/images/sub/whatsinside/main_img02.png"
+          },
+          {
+            "slug": "hongdae-street-food",
+            "name": "Hongdae Street Food",
+            "category": "Restaurant",
+            "coordinates": [37.5565, 126.924],
+            "image": "https://cauexchange.wordpress.com/wp-content/uploads/2019/11/korean-streetfood.00_00_46_31.jpg?w=640&h=312&crop=1"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "locations": [
+          {
+            "slug": "war-memorial-of-korea",
+            "name": "War Memorial of Korea",
+            "category": "Museums",
+            "coordinates": [37.5364, 126.977],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/d3/The_War_Memorial_Of_Korea_240615_02.jpg"
+          },
+          {
+            "slug": "national-museum-of-korea",
+            "name": "National Museum of Korea",
+            "category": "Museums",
+            "coordinates": [37.524, 126.9803],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/1/13/National_Museum_of_Korea.jpg"
+          },
+          {
+            "slug": "ikseon-dong-hanok-village",
+            "name": "Ikseon-dong Hanok Village",
+            "category": "Neighborhoods",
+            "coordinates": [37.5746, 126.9906],
+            "image": "https://www.cktravels.com/wp-content/uploads/2023/06/Ikseon-dong-Hanok-27.jpg"
+          },
+          {
+            "slug": "dongdaemun-design-plaza",
+            "name": "Dongdaemun Design Plaza",
+            "category": "Architectural Buildings",
+            "coordinates": [37.567, 127.0095],
+            "image": "https://www.agoda.com/wp-content/uploads/2024/08/dongdaemun-seoul-featured.jpg"
+          }
+        ]
+      }
+    ],
+    "cityImage": "https://www.agoda.com/wp-content/uploads/2024/08/Namsan-Tower-during-autumn-in-Seoul-South-Korea.jpg"
+  },
+  {
+    "city": "Tokyo",
+    "country": "Japan",
+    "countryCode": "JP",
+    "itineraries": [
+      {
+        "day": "Day 1",
+        "locations": [
+          {
+            "slug": "shinjuku-gyoen",
+            "name": "Shinjuku Gyoen National Garden",
+            "category": "Parks",
+            "coordinates": [35.6851, 139.71],
+            "image": "https://www.japan-guide.com/g18/3034_001_01.jpg"
+          },
+          {
+            "slug": "meiji-shrine",
+            "name": "Meiji Shrine",
+            "category": "Religious Sites",
+            "coordinates": [35.6764, 139.6993],
+            "image": "https://old-tokyo.info/wp-content/uploads/2017/10/mcover-1.jpg"
+          },
+          {
+            "slug": "harajuku",
+            "name": "Harajuku",
+            "category": "Shopping Districts",
+            "coordinates": [35.6716, 139.7031],
+            "image": "https://asset.kompas.com/crops/0wls-czJgab8G5WEXeVR0Py0jHY=/0x0:720x480/1200x800/data/photo/2021/08/06/610d03b18f6f1.jpg"
+          },
+          {
+            "slug": "shibuya-crossing",
+            "name": "Shibuya Crossing",
+            "category": "Points of Interest",
+            "coordinates": [35.6595, 139.7006],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/d1/Shibuya_scramble_crossing_during_Halloween_2023%2C_actually_less_crowded_than_usual%2C_high_police_presence_2.jpg"
+          },
+          {
+            "slug": "starbucks-reserve",
+            "name": "Starbucks Reserve Roastery Tokyo",
+            "category": "Cafe",
+            "coordinates": [35.6498, 139.6999],
+            "image": "https://img.homejournal.com/2019/03/14081228/SBX022819-Tokyo-Roastery-Opening-1.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 2",
+        "locations": [
+          {
+            "slug": "sensoji-temple",
+            "name": "Sensoji Temple",
+            "category": "Religious Sites",
+            "coordinates": [35.7148, 139.7967],
+            "image": "https://www.japan-guide.com/g18/3001_01.jpg"
+          },
+          {
+            "slug": "tokyo-skytree",
+            "name": "Tokyo Skytree",
+            "category": "Observation Decks",
+            "coordinates": [35.71, 139.8107],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/8/84/Tokyo_Skytree_2014_%E2%85%A2.jpg"
+          },
+          {
+            "slug": "ueno-park",
+            "name": "Ueno Park",
+            "category": "Parks",
+            "coordinates": [35.7134, 139.7745],
+            "image": "https://www.japan-guide.com/g18/3019_02.jpg"
+          },
+          {
+            "slug": "akihabara",
+            "name": "Akihabara",
+            "category": "Shopping Districts",
+            "coordinates": [35.7023, 139.7745],
+            "image": "https://cdn.cheapoguides.com/wp-content/uploads/sites/2/2020/05/akihabara-iStock-484915982-1024x600.jpg"
+          },
+          {
+            "slug": "pontocho-shinjuku",
+            "name": "Pontocho Shinjuku",
+            "category": "Restaurant",
+            "coordinates": [35.6938, 139.7034],
+            "image": "https://tblg.k-img.com/resize/640x360c/restaurant/images/Rvw/70550/70550961.jpg?token=eb63e42&api=v2"
+          }
+        ]
+      },
+      {
+        "day": "Day 3",
+        "locations": [
+          {
+            "slug": "tsukiji-outer-market",
+            "name": "Tsukiji Outer Market",
+            "category": "Markets",
+            "coordinates": [35.6654, 139.7707],
+            "image": "https://www.japan-guide.com/g18/3021_05.jpg"
+          },
+          {
+            "slug": "imperial-palace",
+            "name": "Imperial Palace",
+            "category": "Historic Sites",
+            "coordinates": [35.6895, 139.745],
+            "image": "https://www.japan-guide.com/g18/3017_01.jpg"
+          },
+          {
+            "slug": "teamlabs-planets",
+            "name": "teamLab Planets",
+            "category": "Art Museums",
+            "coordinates": [35.6449, 139.7677],
+            "image": "https://res-2.cloudinary.com/jnto/image/upload/w_2064,h_1300,c_fill,f_auto,fl_lossy,q_auto/v1630477164/tokyo/Tokyo2137_main"
+          },
+          {
+            "slug": "odaiba",
+            "name": "Odaiba",
+            "category": "Neighborhoods",
+            "coordinates": [35.6128, 139.7532],
+            "image": "https://www.japan-guide.com/g18/3008_01.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "locations": [
+          {
+            "slug": "tokyo-tower",
+            "name": "Tokyo Tower",
+            "category": "Observation Decks",
+            "coordinates": [35.6586, 139.7454],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/5/58/Tokyo_Tower_2023.jpg"
+          },
+          {
+            "slug": "roppongi-hills",
+            "name": "Roppongi Hills",
+            "category": "Shopping Malls",
+            "coordinates": [35.6604, 139.7292],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/0f/28/8c/roppongi-hills.jpg?w=1200&h=-1&s=1"
+          },
+          {
+            "slug": "mori-art-museum",
+            "name": "Mori Art Museum",
+            "category": "Art Museums",
+            "coordinates": [35.6604, 139.7292],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Mori_Art_Museum_-----.png"
+          },
+          {
+            "slug": "ginza",
+            "name": "Ginza",
+            "category": "Shopping Districts",
+            "coordinates": [35.6721, 139.7636],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Ginza-WAKO_at_night.jpg/1200px-Ginza-WAKO_at_night.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 5",
+        "locations": [
+          {
+            "slug": "toyosu-fish-market",
+            "name": "Toyosu Fish Market",
+            "category": "Markets",
+            "coordinates": [35.6454, 139.7755],
+            "image": "https://res-1.cloudinary.com/jnto/image/upload/w_2064,h_1300,c_fill,f_auto,fl_lossy,q_auto/v1580799690/tokyo/2034_1"
+          },
+          {
+            "slug": "teamlab-borderless",
+            "name": "teamLab Borderless",
+            "category": "Art Museums",
+            "coordinates": [35.6249, 139.7744],
+            "image": "https://team-lab.imagewave.pictures/Yt5eET5oZzm6FBicauQUSY?width=3840&quality=30"
+          },
+          {
+            "slug": "nakameguro",
+            "name": "Nakameguro",
+            "category": "Neighborhoods",
+            "coordinates": [35.6442, 139.6989],
+            "image": "https://www.gotokyo.org/en/destinations/southern-tokyo/nakameguro/images/103_0016_4.jpg"
+          },
+          {
+            "slug": "daikanyama",
+            "name": "Daikanyama",
+            "category": "Shopping Districts",
+            "coordinates": [35.649, 139.7033],
+            "image": "https://www.gotokyo.org/en/destinations/western-tokyo/daikanyama/images/area034_1005_27.jpg"
+          },
+          {
+            "slug": "owl-cafe-tokyo",
+            "name": "Owl Cafe Tokyo",
+            "category": "Cafe",
+            "coordinates": [35.7033, 139.775],
+            "image": "https://cdn.getyourguide.com/img/tour/5d3f7d4a71a49.jpeg/146.jpg"
+          }
+        ]
+      }
+    ],
+    "cityImage": "https://www.agoda.com/wp-content/uploads/2018/07/Experience-Tokyo_landmarks_Tokyo-Tower.jpg"
+  },
+  {
+    "city": "London",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "itineraries": [
+      {
+        "day": "Day 1",
+        "locations": [
+          {
+            "slug": "tower-of-london",
+            "name": "Tower of London",
+            "category": "Historic Sites",
+            "coordinates": [51.508112, -0.076204],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Tower_of_London_from_the_Shard_%288515883950%29.jpg"
+          },
+          {
+            "slug": "tower-bridge",
+            "name": "Tower Bridge",
+            "category": "Bridges",
+            "coordinates": [51.505456, -0.075356],
+            "image": "https://cdn.britannica.com/35/156335-050-62245FCA/Tower-Bridge-River-Thames-London.jpg"
+          },
+          {
+            "slug": "borough-market",
+            "name": "Borough Market",
+            "category": "Markets",
+            "coordinates": [51.505444, -0.091249],
+            "image": "https://boroughmarket.org.uk/wp-content/uploads/2021/02/Borough-Market-sign.jpg"
+          },
+          {
+            "slug": "tate-modern",
+            "name": "Tate Modern",
+            "category": "Art Museums",
+            "coordinates": [51.507748, -0.099469],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/0/00/Tate_Modern_-_Bankside_Power_Station.jpg"
+          },
+          {
+            "slug": "st-pauls-cathedral",
+            "name": "St. Paul's Cathedral",
+            "category": "Churches",
+            "coordinates": [51.513845, -0.098351],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/St_Pauls_aerial_%28cropped%29.jpg/1200px-St_Pauls_aerial_%28cropped%29.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 2",
+        "locations": [
+          {
+            "slug": "british-museum",
+            "name": "British Museum",
+            "category": "Museums",
+            "coordinates": [51.519459, -0.126931],
+            "image": "https://cdn.britannica.com/12/127112-050-F4DD3B7A/British-Museum-London.jpg"
+          },
+          {
+            "slug": "covent-garden",
+            "name": "Covent Garden",
+            "category": "Neighborhoods",
+            "coordinates": [51.512075, -0.123241],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/9f/f5/5e/covent-garden-is-a-world.jpg?w=900&h=500&s=1"
+          },
+          {
+            "slug": "national-gallery",
+            "name": "National Gallery",
+            "category": "Art Museums",
+            "coordinates": [51.508929, -0.128299],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Galer%C3%ADa_Nacional%2C_Londres%2C_Inglaterra%2C_2014-08-07%2C_DD_036.JPG"
+          },
+          {
+            "slug": "trafalgar-square",
+            "name": "Trafalgar Square",
+            "category": "Points of Interest",
+            "coordinates": [51.508039, -0.128069],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Trafalgar_Square%2C_London_2_-_Jun_2009.jpg/1200px-Trafalgar_Square%2C_London_2_-_Jun_2009.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 3",
+        "locations": [
+          {
+            "slug": "westminster-abbey",
+            "name": "Westminster Abbey",
+            "category": "Churches",
+            "coordinates": [51.499479, -0.127397],
+            "image": "https://cdn.londonandpartners.com/asset/westminster-abbey_westminster-abbey-copyright-shutterstock-image-courtesy-of-shutterstock_9ac64ccf26eadb50669d288736e98f65.jpg"
+          },
+          {
+            "slug": "houses-of-parliament",
+            "name": "Houses of Parliament",
+            "category": "Government Buildings",
+            "coordinates": [51.499633, -0.124755],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Houses_of_Parliament_in_2022_%28cropped%29.jpg"
+          },
+          {
+            "slug": "buckingham-palace",
+            "name": "Buckingham Palace",
+            "category": "Historic Sites",
+            "coordinates": [51.501364, -0.14189],
+            "image": "https://lp-cms-production.imgix.net/2021-04/shutterstockRF_457813381.jpg"
+          },
+          {
+            "slug": "hyde-park",
+            "name": "Hyde Park",
+            "category": "Parks",
+            "coordinates": [51.507351, -0.165769],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Hyde_Park_London_from_the_air.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 4",
+        "locations": [
+          {
+            "slug": "london-eye",
+            "name": "London Eye",
+            "category": "Observation Decks",
+            "coordinates": [51.503399, -0.119519],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/d6/London-Eye-2009.JPG"
+          },
+          {
+            "slug": "london-dungeon",
+            "name": "London Dungeon",
+            "category": "Theme Parks",
+            "coordinates": [51.502502, -0.118885],
+            "image": "https://cdn.getyourguide.com/img/tour/5cf0f77cdc77b.jpeg/146.jpg"
+          },
+          {
+            "slug": "natural-history-museum",
+            "name": "Natural History Museum",
+            "category": "Museums",
+            "coordinates": [51.496715, -0.176367],
+            "image": "https://cdn.londonandpartners.com/asset/natural-history-museum_blue-whale-hintze-hall-photo-lucie-goodayle-image-courtesy-of-the-natural-history-museum_c4b9caf92a46e29762bcc2db0635f11b.jpg"
+          },
+          {
+            "slug": "victoria-and-albert-museum",
+            "name": "Victoria and Albert Museum",
+            "category": "Art Museums",
+            "coordinates": [51.496639, -0.172181],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Victoria_%26_Albert_Museum_Entrance%2C_London%2C_UK_-_Diliff.jpg/250px-Victoria_%26_Albert_Museum_Entrance%2C_London%2C_UK_-_Diliff.jpg"
+          }
+        ]
+      }
+    ],
+    "cityImage": "https://www.agoda.com/wp-content/uploads/2020/05/Featured-photo-aerial-of-River-Thames-Things-to-do-in-London-UK.jpg"
+  },
+  {
+    "city": "Bangkok",
+    "country": "Thailand",
+    "countryCode": "TH",
+    "itineraries": [
+      {
+        "day": "Day 1",
+        "locations": [
+          {
+            "slug": "grand-palace",
+            "name": "Grand Palace",
+            "category": "Historic Sites",
+            "coordinates": [13.75, 100.4917],
+            "image": "https://static.wixstatic.com/media/2cc94a_f41bf7cbf0d34a2faaf7f0e27aabb3b3~mv2.jpg/v1/fill/w_640,h_480,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/2cc94a_f41bf7cbf0d34a2faaf7f0e27aabb3b3~mv2.jpg"
+          },
+          {
+            "slug": "wat-phra-kaew",
+            "name": "Wat Phra Kaew (Temple of the Emerald Buddha)",
+            "category": "Temples",
+            "coordinates": [13.7516, 100.4926],
+            "image": "https://smarthistory.org/wp-content/uploads/2020/12/Temple-complex-Wat-Phra-Kaew.jpg"
+          },
+          {
+            "slug": "wat-pho",
+            "name": "Wat Pho (Temple of the Reclining Buddha)",
+            "category": "Temples",
+            "coordinates": [13.7465, 100.493],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/07/fa/67/3c/temple-of-the-reclining.jpg?w=1200&h=1200&s=1"
+          },
+          {
+            "slug": "wat-arun",
+            "name": "Wat Arun (Temple of Dawn)",
+            "category": "Temples",
+            "coordinates": [13.7437, 100.4888],
+            "image": "https://static.wixstatic.com/media/2cc94a_07e55de318fe41538e17cb9de596cb45~mv2.jpg/v1/fill/w_2500,h_1406,al_c/2cc94a_07e55de318fe41538e17cb9de596cb45~mv2.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 2",
+        "locations": [
+          {
+            "slug": "chatuchak-market",
+            "name": "Chatuchak Weekend Market",
+            "category": "Markets",
+            "coordinates": [13.7999, 100.5502],
+            "image": "https://res.cloudinary.com/pillarshotels/image/upload/f_auto/web/cms/resources/attractions/chatuchak-w1800h1360.jpg"
+          },
+          {
+            "slug": "jim-thompson-house",
+            "name": "Jim Thompson House",
+            "category": "Museums",
+            "coordinates": [13.7455, 100.5305],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/18/f3/f2/f8/outside.jpg?w=1200&h=-1&s=1"
+          },
+          {
+            "slug": "siam-paragon",
+            "name": "Siam Paragon",
+            "category": "Shopping Malls",
+            "coordinates": [13.7462, 100.5347],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/23/d7/7c/c2/apply-tourist-card-to.jpg?w=1200&h=-1&s=1"
+          },
+          {
+            "slug": "mbk-center",
+            "name": "MBK Center",
+            "category": "Shopping Malls",
+            "coordinates": [13.7445, 100.5296],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/74/a1/0b/mbk-center.jpg?w=1200&h=1200&s=1"
+          },
+          {
+            "slug": "siam-square",
+            "name": "Siam Square",
+            "category": "Neighborhoods",
+            "coordinates": [13.7455, 100.5331],
+            "image": "https://www.ahstatic.com/photos/1031_ho_00_p_1024x768.jpg"
+          }
+        ]
+      },
+      {
+        "day": "Day 3",
+        "locations": [
+          {
+            "slug": "golden-mount",
+            "name": "Wat Saket (Golden Mount)",
+            "category": "Temples",
+            "coordinates": [13.7538, 100.5066],
+            "image": "https://www.placesofjuma.com/wp-content/uploads/2019/03/Golden-Mount-facebook.jpg"
+          },
+          {
+            "slug": "museum-of-siam",
+            "name": "Museum of Siam",
+            "category": "Museums",
+            "coordinates": [13.7445, 100.4914],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/1/15/Museum_Siam_%28III%29.jpg"
+          },
+          {
+            "slug": "chinatown",
+            "name": "Chinatown",
+            "category": "Neighborhoods",
+            "coordinates": [13.7414, 100.5097],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/6/64/Yaowarat_at_night_%2832455695783%29.jpg"
+          },
+          {
+            "slug": "pak-khlong-talat",
+            "name": "Pak Khlong Talat (Flower Market)",
+            "category": "Markets",
+            "coordinates": [13.7417, 100.4956],
+            "image": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Flowermarket.jpg"
+          },
+          {
+            "slug": "khao-san-road",
+            "name": "Khao San Road",
+            "category": "Neighborhoods",
+            "coordinates": [13.7587, 100.4972],
+            "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0a/70/7d/de/dsc-0561-1-largejpg.jpg?w=1200&h=-1&s=1"
+          }
+        ]
+      }
+    ],
+    "cityImage": "https://www.agoda.com/wp-content/uploads/2018/06/experiences_thailand_bangkok_wat-phra-kaew.jpg"
+  }
+]

@@ -3,3 +3,5 @@ node_modules
 .env.uat
 private-key.pem
 public-key.pem
+ecosystem.config.js
+juang-site-key.pem
