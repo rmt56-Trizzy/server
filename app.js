@@ -34,7 +34,7 @@ app.post("/midtrans-webhook", async (req, res) => {
   try {
     const {
       transaction_status,
-      fraudStatus,
+      fraud_status,
       signature_key,
       status_code,
       order_id,
@@ -61,7 +61,7 @@ app.post("/midtrans-webhook", async (req, res) => {
     // https://docs.midtrans.com/docs/https-notification-webhooks#b-status-definition-b
     // https://docs.midtrans.com/docs/https-notification-webhooks#b-verifying-notification-authenticity-b
     if (transaction_status === "capture") {
-      if (fraudStatus == "accept") {
+      if (fraud_status == "accept") {
         await Subscription.updateSubscriptionStatus(order_id, "paid");
         console.log(`✅ Payment successful: Order ID ${order_id}`);
         return res
